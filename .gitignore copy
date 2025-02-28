@@ -1,0 +1,11 @@
+.DS_Store
+/result
+.direnv*
+.devenv
+.aider*
+.env
+.env.local
+.pre-commit-config.yaml
+secrets/
+/nix-secrets*
+nix-shell

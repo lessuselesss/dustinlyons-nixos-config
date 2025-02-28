@@ -5,7 +5,7 @@
   home-manager,
   ...
 }: let
-  user = "dustin";
+  user = "lessuseless";
   # Define the content of your file as a derivation
   myEmacsLauncher = pkgs.writeScript "emacs-launcher.command" ''
     #!/bin/sh
@@ -18,7 +18,7 @@ in {
     ./dock
   ];
 
-  # It me
+  # its lessuseless
   users.users.${user} = {
     name = "${user}";
     home = "/Users/${user}";
@@ -40,8 +40,16 @@ in {
     # $ mas search <app name>
     #
     masApps = {
-      "hidden-bar" = 1452453066;
-      "wireguard" = 1451685025;
+      "Gordian Seed Tool" = 1545088229;
+      "DuckDuckGo" = 663592361;
+      "Pure Paste" = 1611378436;
+      "Shareful" = 1522267256;
+      "Command X" = 6448461551;
+      "One Thing" = 1604176982;
+      "Folder Peek" = 1615988943;
+      "Seed Tool" = 1545088229;
+      # "Today" = 6443714928;
+      "Refined GitHub" = 1519867270;
     };
   };
 

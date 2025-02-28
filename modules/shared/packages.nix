@@ -1,100 +1,136 @@
-{ pkgs, ... }:
-
+{pkgs}:
 with pkgs; [
-  # General packages for development and system management
+  # Due to how this flake defines an admin at the system level
+  # and standard users via home-manager, packages defined here
+  # SHOULD
+  # 1. NOT be system services
+  # 2. NOT require sudo or an admin password
+  # 3. BE available in nixpkgs and have builds
+  #    hosts supported in this flake.
+  #
+  # [srv] = system service/daemon
+  # [adm] = admin application
+  # [usr] = user package
   act
+  age
+  age-plugin-ledger
+  age-plugin-yubikey
   alacritty
+  alejandra
   aspell
   aspellDicts.en
   bash-completion
   bat
+  bazecor
+  beeper
+  black
   btop
+  bun
+  cargo
+  claude
+  cmake
   coreutils
-  difftastic
-  du-dust
-  gcc
-  git-filter-repo
-  killall
-  neofetch
-  openssh
-  pandoc
-  sqlite
-  wget
-  zip
-  uv
-
-  # Encryption and security tools
-  _1password
-  age
-  age-plugin-yubikey
-  gnupg
-  libfido2
-
-  # Cloud-related tools and SDKs
-  # docker
-  # docker-compose
-  # awscli2 - marked broken Mar 22
-  flyctl
-  google-cloud-sdk
-  go
-  gopls
-  ngrok
-  ssm-session-manager-plugin
-  terraform
-  terraform-ls
-  tflint
-
-  # Media-related packages
-  emacs-all-the-icons-fonts
-  imagemagick
+  curl
+  cursor
   dejavu_fonts
-  ffmpeg
+  deno
+  devenv
+  difftastic
+  discord
+  du-dust
+  dunst
+  emacs-all-the-icons-fonts
+  fabric-ai
   fd
+  ffmpeg
+  flyctl
   font-awesome
-  glow
-  hack-font
-  jpegoptim
-  meslo-lgs-nf
-  noto-fonts
-  noto-fonts-emoji
-  pngquant
-
-  # PHP
-  php82
-  php82Packages.composer
-  php82Packages.php-cs-fixer
-  php82Extensions.xdebug
-  php82Packages.deployer
-  phpunit
-
-  # Node.js development tools
   fzf
-  nodePackages.live-server
-  nodePackages.nodemon
-  nodePackages.prettier
-  nodePackages.npm
-  nodejs
-
-  # Source code management, Git, GitHub tools
+  gcc
   gh
-
-  # Text and terminal utilities
+  git
+  git-filter-repo
+  glow
+  gnupg
+  go
+  google-cloud-sdk
+  gopls
+  hack-font
   htop
   hunspell
   iftop
+  imagemagick
   jetbrains-mono
   jetbrains.phpstorm
+  jpegoptim
   jq
+  killall
+  kit
+  lazydocker
+  ledger-live
+  libfido2
+  meslo-lgs-nf
+  mods
+  neofetch
+  ngrok
+  nil
+  nix-direnv
+  nodePackages.live-server
+  nodePackages.nodemon
+  nodePackages.npm
+  nodePackages.prettier
+  nodejs_23
+  noto-fonts
+  noto-fonts-emoji
+  nurl
+  ollama
+  openssh
+  pandoc
+  pass
+  php82
+  php82Extensions.xdebug
+  php82Packages.composer
+  php82Packages.deployer
+  php82Packages.php-cs-fixer
+  phpunit
+  pkg-config
+  pngquant
+  polybar
+  python312.withPackages
+  (ps:
+    with ps; [
+      black
+      python3
+      virtualenv
+      pip
+      time-machine
+    ])
+  qflipper
   ripgrep
+  screen-locker
   slack
-  tree
+  spacedrive
+  sqlite
+  ssm-session-manager-plugin
+  tailscale
+  talon
+  terraform
+  terraform-ls
+  tflint
   tmux
+  tree
+  udiskie
   unrar
   unzip
+  uv
+  vim
+  vscode
+  warp
+  wget
+  wireshark
+  zip
+  zsh
+  zsh-autosuggestions
   zsh-powerlevel10k
-
-  # Python packages
-  black
-  python3
-  virtualenv
+  zsh-syntax-highlighting
 ]

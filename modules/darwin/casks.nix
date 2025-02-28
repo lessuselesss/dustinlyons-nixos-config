@@ -1,7 +1,52 @@
-_:
-
-[
-  # Development Tools
+_: [
+  "whatsyoursign"
+  "lulu"
+  "blockblock"
+  "secretive"
+  "kextviewr"
+  "dhs"
+  "netiquette"
+  "knockknock"
+  "taskExplorer"
+  "reikey"
+  "processmonitor"
+  "filemonitor"
+  "dnsmonitor"
+  "yabai"
+  "polybar"
+  "dunst"
+  "dockutil"
+  "pinentry_mac"
+  "mas"
+  "silentknight"
+  "xprocheck"
+  "mints"
+  "ulbow"
+  "cirrus"
+  "xattred"
+  "signet"
+  "wireshark"
+  "sdformatter"
+  "orbstack"
+  "utm"
+  "crystalfetch"
+  "viable"
+  "rclone"
+  "iina"
+  "transmission"
+  "raycast"
+  "jordanbaird-ice"
+  "obsidian"
+  "finicky"
+  "brave-browser"
+  "duckduckgo"
+  "firefox"
+  "google-chrome"
+  "orion"
+  "chatgpt"
+  "msty"
+  "hammerspoon"
+  "anki"
   "homebrew/cask/docker"
   "claude"
   "insomnia"
@@ -9,30 +54,15 @@ _:
   "ngrok"
   "postico"
   "visual-studio-code"
-  "wireshark"
-
-  # Communication Tools
   "discord"
   "loom"
   "slack"
   "telegram"
   "zoom"
-
-  # Utility Tools
   "appcleaner"
   "syncthing"
-
-  # Entertainment Tools
   "steam"
   "vlc"
-
-  # Productivity Tools
-  "raycast"
   "asana"
-
-  # Browsers
-  "google-chrome"
-
-  # AI
   "diffusionbee"
 ]
