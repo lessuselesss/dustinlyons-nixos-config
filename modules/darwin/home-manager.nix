@@ -1,18 +1,21 @@
-{ config, pkgs, lib, home-manager, ... }:
-
-let
+{
+  config,
+  pkgs,
+  lib,
+  home-manager,
+  ...
+}: let
   user = "dustin";
   # Define the content of your file as a derivation
   myEmacsLauncher = pkgs.writeScript "emacs-launcher.command" ''
     #!/bin/sh
       emacsclient -c -n &
   '';
-  sharedFiles = import ../shared/files.nix { inherit config pkgs; };
-  additionalFiles = import ./files.nix { inherit user config pkgs; };
-in
-{
+  sharedFiles = import ../shared/files.nix {inherit config pkgs;};
+  additionalFiles = import ./files.nix {inherit user config pkgs;};
+in {
   imports = [
-   ./dock
+    ./dock
   ];
 
   # It me
@@ -45,20 +48,37 @@ in
   # Enable home-manager
   home-manager = {
     useGlobalPkgs = true;
-    users.${user} = { pkgs, config, lib, ... }:{
+    users.${user} = {
+      pkgs,
+      config,
+      lib,
+      ...
+    }: {
       home = {
         enableNixpkgsReleaseCheck = false;
         packages = pkgs.callPackage ./packages.nix {};
         file = lib.mkMerge [
           sharedFiles
           additionalFiles
-          { "emacs-launcher.command".source = myEmacsLauncher; }
+          {"emacs-launcher.command".source = myEmacsLauncher;}
         ];
 
-        stateVersion = "23.11";
+        stateVersion = "24.11";
+        nix.settings = {
+          substituters = [
+            "https://lessuseless.cachix.org"
+            "https://nix-community.cachix.org"
+            "https://cache.nixos.org"
+          ];
+          trusted-public-keys = [
+            "lessuselesss.cachix.org-1:nwRzA1J+Ze2nJAcioAfp77ifk8sncUi963WW2RExOwA="
+            "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+            "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+          ];
+        };
       };
 
-      programs = {} // import ../shared/home-manager.nix { inherit config pkgs lib; };
+      programs = {} // import ../shared/home-manager.nix {inherit config pkgs lib;};
 
       # Marked broken Oct 20, 2022 check later to remove this
       # https://github.com/nix-community/home-manager/issues/3344
@@ -70,22 +90,22 @@ in
   local = {
     dock.enable = true;
     dock.entries = [
-      { path = "/Applications/Slack.app/"; }
-      { path = "/System/Applications/Messages.app/"; }
-      { path = "/System/Applications/Facetime.app/"; }
-      { path = "/Applications/Telegram.app/"; }
-      { path = "${pkgs.alacritty}/Applications/Alacritty.app/"; }
-      { path = "/System/Applications/Music.app/"; }
-      { path = "/System/Applications/News.app/"; }
-      { path = "/System/Applications/Photos.app/"; }
-      { path = "/System/Applications/Photo Booth.app/"; }
-      { path = "/System/Applications/TV.app/"; }
-      { path = "${pkgs.jetbrains.phpstorm}/Applications/PhpStorm.app/"; }
-      { path = "/Applications/TablePlus.app/"; }
-      { path = "/Applications/Asana.app/"; }
-      { path = "/Applications/Drafts.app/"; }
-      { path = "/System/Applications/Home.app/"; }
-      { path = "/Applications/iPhone Mirroring.app/"; }
+      {path = "/Applications/Slack.app/";}
+      {path = "/System/Applications/Messages.app/";}
+      {path = "/System/Applications/Facetime.app/";}
+      {path = "/Applications/Telegram.app/";}
+      {path = "${pkgs.alacritty}/Applications/Alacritty.app/";}
+      {path = "/System/Applications/Music.app/";}
+      {path = "/System/Applications/News.app/";}
+      {path = "/System/Applications/Photos.app/";}
+      {path = "/System/Applications/Photo Booth.app/";}
+      {path = "/System/Applications/TV.app/";}
+      {path = "${pkgs.jetbrains.phpstorm}/Applications/PhpStorm.app/";}
+      {path = "/Applications/TablePlus.app/";}
+      {path = "/Applications/Asana.app/";}
+      {path = "/Applications/Drafts.app/";}
+      {path = "/System/Applications/Home.app/";}
+      {path = "/Applications/iPhone Mirroring.app/";}
       {
         path = toString myEmacsLauncher;
         section = "others";

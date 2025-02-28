@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "github.vscode-github-actions",
+        "jnoortheen.nix-ide",
+        "kamadorueda.alejandra",
+        "arrterian.nix-env-selector",
+        "mkhl.direnv"
+    ]
+}

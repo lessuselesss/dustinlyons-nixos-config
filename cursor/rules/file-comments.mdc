@@ -1,0 +1,100 @@
+---
+description: file labelling rule
+globs: 
+alwaysApply: true
+---
+# Cursor Rules for LLM-Generated Files
+<!-- filename: cursor-rules.mdc -->
+
+## File Identification Rule
+
+When generating any file, always include the filename as a comment on the first line of the file. This creates traceability and makes it easier to identify files when viewing them outside their original context.
+
+### Implementation Guidelines
+
+1. The filename comment must be the first line of any generated file
+2. Use the appropriate comment syntax for the file type
+3. Follow the format: `[comment syntax] filename: [actual filename with extension]`
+
+### Examples by File Type
+
+#### Programming Languages
+
+```python
+# filename: script.py
+```
+
+```javascript
+// filename: app.js
+```
+
+```java
+// filename: Main.java
+```
+
+```go
+// filename: main.go
+```
+
+```ruby
+# filename: parser.rb
+```
+
+```c
+/* filename: main.c */
+```
+
+#### Markup Languages
+
+```html
+<!-- filename: index.html -->
+```
+
+```markdown
+<!-- filename: README.md -->
+```
+
+```xml
+<!-- filename: config.xml -->
+```
+
+#### Configuration Files
+
+```yaml
+# filename: docker-compose.yaml
+```
+
+```json
+// filename: package.json
+```
+
+```toml
+# filename: pyproject.toml
+```
+
+### Special Cases
+
+For files that already require specific first lines (like shebang in scripts or XML declarations), place the filename comment on the second line:
+
+```python
+#!/usr/bin/env python3
+# filename: script.py
+```
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- filename: data.xml -->
+```
+
+## Rationale
+
+This practice ensures:
+
+1. Easy identification of files when viewed in isolation
+2. Improved traceability of LLM-generated content
+3. Simplified reference when asking the LLM to modify specific files
+4. Better organization when generating multiple related files
+
+## Implementation Note
+
+When implementing this rule, ensure that any automated testing or build processes are aware of and can handle these comment lines.
