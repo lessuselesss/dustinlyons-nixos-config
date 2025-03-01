@@ -1,12 +1,22 @@
 {
-  description = "General Purpose Configuration for macOS and NixOS";
+  description = "lessuseless Nix Systems Configurations";
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    # Home manager will use the rolling version of nixpkgs
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable"; # Latest packages for our builds
+
+    # Nix Systems will use flakehub versions of nixpkgs via determinate
+    nixpkgs-stable.url = "https://flakehub.com/f/NixOS/nixpkgs/*"; # For production stability
+    nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1"; # Bleeding edge features
+    determinate = {
+      url = "https://flakehub.com/f/DeterminateSystems/determinate/0.1";
+      inputs.nixpkgs.follows = "nixpkgs-stable"; # Uses our main package source
+    };
+    fh.url = "https://flakehub.com/f/DeterminateSystems/fh/*"; # FlakeHub integration
     agenix.url = "github:ryantm/agenix";
     home-manager.url = "github:nix-community/home-manager";
     darwin = {
       url = "github:LnL7/nix-darwin/master";
-      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
     nix-homebrew = {
       url = "github:zhaofengli-wip/nix-homebrew";
@@ -22,81 +32,247 @@
     homebrew-cask = {
       url = "github:homebrew/homebrew-cask";
       flake = false;
-    }; 
-    disko = {
-      url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
-    secrets = {
-      url = "git+ssh://git@github.com/dustinlyons/nix-secrets.git";
+    homebrew-services = {
+      url = "github:homebrew/homebrew-services";
       flake = false;
     };
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
+    };
+
+    # Commenting out secrets temporarily
+    # secrets = {
+    #   url = "git+ssh://git@github.com/lessuseless/nix-secrets.git";
+    #   flake = false;
+    # };
+
+    # apple-silicon-support = {
+    #   url = "github:tpwrules/nixos-apple-silicon";
+    #   inputs.nixpkgs.follows = "nixpkgs"; # Maintains package consistency
+    # };
+
+    # nix-on-droid = {
+    #   url = "github:nix-community/nix-on-droid/release-24.05"; # Android support
+    #   inputs.nixpkgs.follows = "nixpkgs"; # Maintains package consistency
+    # };
+
+    # johnny-mnemonix = {
+    #   url = "github:lessuselesss/johnny-mnemonix"; # Custom module source
+    #   inputs.nixpkgs.follows = "nixpkgs"; # Uses main packages
+    # };
+
+    pre-commit-hooks = {
+      url = "github:cachix/pre-commit-hooks.nix"; # Pre-commit hook framework
+      inputs.nixpkgs.follows = "nixpkgs-stable"; # Uses main packages
+    };
   };
-  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, disko, agenix, secrets } @inputs:
-    let
-      user = "dustin";
-      linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
-      darwinSystems = [ "aarch64-darwin" "x86_64-darwin" ];
-      forAllSystems = f: nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) f;
-      devShell = system: let pkgs = nixpkgs.legacyPackages.${system}; in {
-        default = with pkgs; mkShell {
-          nativeBuildInputs = with pkgs; [ bashInteractive git age age-plugin-yubikey ];
-          shellHook = with pkgs; ''
-            export EDITOR=vim
-          '';
+  outputs = {
+    fh,
+    self,
+    disko,
+    darwin,
+    determinate,
+    nix-homebrew,
+    homebrew-bundle,
+    homebrew-core,
+    homebrew-cask,
+    home-manager,
+    homebrew-services,
+    nixpkgs,
+    nixpkgs-stable,
+    nixpkgs-unstable,
+    pre-commit-hooks,
+    # secrets,  # Comment out from outputs
+    agenix,
+  } @ inputs: let
+    adminUser = "admin";
+    regularUser = "lessuseless";
+    linuxSystems = ["x86_64-linux" "aarch64-linux"];
+    darwinSystems = ["aarch64-darwin" "x86_64-darwin"];
+    mobileSystems = ["aarch64-linux"]; # Mobile platform architectures
+    forAllSystems = f: nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems ++ mobileSystems) f; # Helper for multi-platform configs
+
+    devShell = system: let
+      pkgs = nixpkgs.legacyPackages.${system}; # System-specific packages
+      mkPreCommitHook = {
+        pre-commit-check = pre-commit-hooks.lib.${system}.run {
+          src = ./.; # Current directory
+          hooks = {
+            repomix-generator = {
+              enable = true;
+              name = "repomix-generator";
+              entry = "${pkgs.writeShellScript "generate-repomix" ''
+                ${pkgs.nodejs}/bin/node ${pkgs.nodePackages.npm}/bin/npx repomix .
+                git add repomix-output.txt
+              ''}";
+              files = ".*"; # Runs on all files
+              pass_filenames = false;
+            };
+
+            alejandra-lint = {
+              enable = true;
+              name = "alejandra-lint";
+              entry = "${pkgs.alejandra}/bin/alejandra .";
+              files = ".*"; # Formats all files
+              pass_filenames = false;
+            };
+
+            build-check = {
+              enable = true;
+              name = "build-check";
+              entry = "${pkgs.writeShellScript "verify-build" ''
+                echo "Verifying build..."
+                nix run .#build-switch
+              ''}";
+              files = ".*"; # Checks all files
+              pass_filenames = false;
+            };
+          };
         };
       };
-      mkApp = scriptName: system: {
-        type = "app";
-        program = "${(nixpkgs.legacyPackages.${system}.writeScriptBin scriptName ''
-          #!/usr/bin/env bash
-          PATH=${nixpkgs.legacyPackages.${system}.git}/bin:$PATH
-          echo "Running ${scriptName} for ${system}"
-          exec ${self}/apps/${system}/${scriptName}
-        '')}/bin/${scriptName}";
+    in {
+      default = pkgs.mkShell {
+        nativeBuildInputs = with pkgs; [
+          bashInteractive # Enhanced shell
+          git # Version control
+          age # Encryption tool
+          age-plugin-yubikey # YubiKey support
+          age-plugin-ledger # Ledger support
+          nodejs_23 # Node.js runtime
+          nodePackages.npm # Package manager
+        ];
+        shellHook = ''
+          ${mkPreCommitHook.pre-commit-check.shellHook}  # Setup pre-commit hooks
+          export EDITOR=vim  # Set default editor
+          git config --unset-all core.hooksPath || true  # Reset Git hooks path
+        '';
       };
-      mkLinuxApps = system: {
-        "apply" = mkApp "apply" system;
-        "build-switch" = mkApp "build-switch" system;
-        "copy-keys" = mkApp "copy-keys" system;
-        "create-keys" = mkApp "create-keys" system;
-        "check-keys" = mkApp "check-keys" system;
-        "install" = mkApp "install" system;
-        "install-with-secrets" = mkApp "install-with-secrets" system;
-      };
-      mkDarwinApps = system: {
-        "apply" = mkApp "apply" system;
-        "build" = mkApp "build" system;
-        "build-switch" = mkApp "build-switch" system;
-        "copy-keys" = mkApp "copy-keys" system;
-        "create-keys" = mkApp "create-keys" system;
-        "check-keys" = mkApp "check-keys" system;
-        "rollback" = mkApp "rollback" system;
-      };
-    in
-    {
-      templates = {
-        starter = {
-          path = ./templates/starter;
-          description = "Starter configuration";
+    };
+
+    mkApp = scriptName: system: {
+      type = "app";
+      program = "${(nixpkgs.legacyPackages.${system}.writeScriptBin scriptName ''
+        #!/usr/bin/env bash
+        PATH=${nixpkgs.legacyPackages.${system}.git}/bin:$PATH
+        echo "Running ${scriptName} for ${system}"
+        # Detect Android environment
+        if [[ -n "$TERMUX_VERSION" ]]; then
+          exec ${self}/apps/aarch64-android/${scriptName}  # Use Android-specific path
+        else
+          exec ${self}/apps/${system}/${scriptName}  # Use system-specific path
+        fi
+      '')}/bin/${scriptName}";
+    };
+
+    mkLinuxApps = system:
+      {
+        apply = mkApp "apply" system; # System changes application
+        "build-switch" = mkApp "build-switch" system; # Build and switch configuration
+      }
+      // (
+        if system != "aarch64-android"
+        then {
+          "copy-keys" = mkApp "copy-keys" system; # Key management
+          "create-keys" = mkApp "create-keys" system; # Key generation
+          "check-keys" = mkApp "check-keys" system; # Key verification
+          install = mkApp "install" system; # System installation
+          "install-with-secrets" = mkApp "install-with-secrets" system; # Installation with secrets
+        }
+        else {}
+      );
+
+    mkDarwinApps = system: {
+      apply = mkApp "apply" system; # Apply system changes
+      build = mkApp "build" system; # Build configuration
+      "build-switch" = mkApp "build-switch" system; # Build and switch configuration
+      "copy-keys" = mkApp "copy-keys" system; # Copy encryption keys
+      "create-keys" = mkApp "create-keys" system; # Generate new keys
+      "check-keys" = mkApp "check-keys" system; # Verify key status
+      rollback = mkApp "rollback" system; # Revert system changes
+    };
+  in {
+    # What: Development environment definitions
+    # Does: Creates development shells for all platforms
+    # Why: Ensures consistent development across systems
+    devShells = forAllSystems devShell; # Generate shells for each platform
+
+    # What: System-specific applications
+    # Does: Creates platform-specific command wrappers
+    # Why: Provides consistent interface across systems
+    apps = (nixpkgs.lib.genAttrs linuxSystems mkLinuxApps) // (nixpkgs.lib.genAttrs darwinSystems mkDarwinApps);
+
+    # What: Code quality checks
+    # Does: Configures pre-commit hooks for all systems
+    # Why: Maintains code quality standards
+    checks = forAllSystems (system: let
+      pkgs = nixpkgs.legacyPackages.${system}; # System-specific packages
+    in {
+      pre-commit-check = pre-commit-hooks.lib.${system}.run {
+        src = ./.; # Current directory
+        hooks = {
+          # What: Documentation generator
+          # Does: Updates repository documentation
+          # Why: Maintains current documentation
+          repomix-generator = {
+            enable = true;
+            name = "repomix-generator";
+            entry = "${pkgs.writeShellScript "generate-repomix" ''
+              ${pkgs.nodejs}/bin/node ${pkgs.nodePackages.npm}/bin/npx repomix .
+              git add repomix-output.txt
+            ''}";
+            files = ".*"; # All files
+            pass_filenames = false;
+          };
+
+          # What: Code formatter
+          # Does: Ensures consistent code style
+          # Why: Maintains code quality
+          alejandra-lint = {
+            enable = true;
+            name = "alejandra-lint";
+            entry = "${pkgs.alejandra}/bin/alejandra .";
+            files = ".*"; # All files
+            pass_filenames = false;
+          };
+
+          # What: Build verification
+          # Does: Tests system configuration
+          # Why: Catches build issues early
+          build-check = {
+            enable = true;
+            name = "build-check";
+            entry = "${pkgs.writeShellScript "verify-build" ''
+              echo "Verifying build..."
+              nix run .#build-switch
+            ''}";
+            files = ".*"; # All files
+            pass_filenames = false;
+          };
         };
-        starter-with-secrets = {
-          path = ./templates/starter-with-secrets;
-          description = "Starter configuration with secrets";
-        };
       };
-      devShells = forAllSystems devShell;
-      apps = nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
-      darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (system:
+    });
+
+    darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (
+      system:
         darwin.lib.darwinSystem {
           inherit system;
           specialArgs = inputs;
           modules = [
+            ./modules/shared/users/admin.nix
+            ./modules/shared/users/lessuseless.nix
             home-manager.darwinModules.home-manager
+            {
+              home-manager = {
+                useGlobalPkgs = false; # Separation of concerns for admin and regular users
+                useUserPackages = true; # Isolate user-specific packages
+              };
+            }
             nix-homebrew.darwinModules.nix-homebrew
             {
               nix-homebrew = {
-                inherit user;
+                user = regularUser;
                 enable = true;
                 taps = {
                   "homebrew/homebrew-core" = homebrew-core;
@@ -110,23 +286,81 @@
             ./hosts/darwin
           ];
         }
-      );
-      nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system:
+    );
+    nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (
+      system:
         nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = inputs;
           modules = [
+            ./modules/shared/users/admin.nix
+            ./modules/shared/users/lessuseless.nix
             disko.nixosModules.disko
-            home-manager.nixosModules.home-manager {
+            home-manager.nixosModules.home-manager
+            {
               home-manager = {
-                useGlobalPkgs = true;
+                useGlobalPkgs = false;
                 useUserPackages = true;
-                users.${user} = import ./modules/nixos/home-manager.nix;
               };
             }
             ./hosts/nixos
           ];
         }
-      );
+    );
+    devShell = system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+      hooks = {
+        alejandra-lint = {
+          enable = true;
+          name = "alejandra-lint";
+          entry = "${pkgs.alejandra}/bin/alejandra .";
+          language = "system";
+          pass_filenames = false;
+        };
+
+        deadnix-lint = {
+          enable = true;
+          name = "deadnix-lint";
+          entry = "${pkgs.deadnix}/bin/deadnix .";
+          language = "system";
+          pass_filenames = false;
+        };
+
+        build-check = {
+          enable = true;
+          name = "build-check";
+          entry = "${pkgs.writeScript "verify-build" ''
+            # existing build check script
+          ''}";
+          language = "system";
+          pass_filenames = false;
+        };
+
+        repomix-generator = {
+          enable = true;
+          name = "repomix-generator";
+          entry = "${pkgs.writeScript "generate-repomix" ''
+            # existing repomix script
+          ''}";
+          language = "system";
+          pass_filenames = false;
+        };
+      };
+    in {
+      default = with pkgs;
+        mkShell {
+          nativeBuildInputs = with pkgs; [
+            bashInteractive
+            git
+            age
+            age-plugin-yubikey
+            deadnix
+          ];
+          shellHook = with pkgs; ''
+            export EDITOR=vim
+          '';
+          inherit hooks;
+        };
     };
+  };
 }
