@@ -1,40 +1,54 @@
 # Common admin user configuration for both NixOS and Darwin
-{pkgs, ...}: {
-  users.users.admin = {
-    # Common attributes
-    description = "System Administrator";
-    isNormalUser = true;
-    shell = pkgs.zsh;
+{
+  pkgs,
+  lib,
+  ...
+}: {
+  users.users.admin = lib.mkMerge [
+    # Common configuration
+    {
+      description = "System Administrator";
+      shell = pkgs.zsh;
 
-    # Admin groups (will be merged with system-specific groups)
-    extraGroups = ["wheel"];
+      # Basic admin packages
+      packages = with pkgs; [
+        # System monitoring
+        htop
+        btop
+        iftop
 
-    # Basic admin packages
-    packages = with pkgs; [
-      # System monitoring
-      htop
-      btop
-      iftop
+        # File operations
+        tree
+        wget
+        curl
+        ripgrep
+        fd
 
-      # File operations
-      tree
-      wget
-      curl
-      ripgrep
-      fd
+        # System management
+        jq
+        vim
+        git
 
-      # System management
-      jq
-      vim
-      git
+        # Security tools
+        gnupg
+        age
+        age-plugin-yubikey
+        pass
+      ];
+    }
 
-      # Security tools
-      gnupg
-      age
-      age-plugin-yubikey
-      pass
-    ];
-  };
+    # NixOS-specific configuration
+    (lib.mkIf pkgs.stdenv.isLinux {
+      isNormalUser = true;
+      extraGroups = ["wheel"];
+      # Add any other Linux-specific user attributes here
+    })
+
+    # Darwin-specific configuration
+    (lib.mkIf pkgs.stdenv.isDarwin {
+      # Add any Darwin-specific user attributes here if needed
+    })
+  ];
 
   # Basic shell configuration at system level
   programs.zsh = {
@@ -52,9 +66,14 @@
       alias please='sudo $(fc -ln -1)'  # Rerun last command with sudo
 
       # System maintenance shortcuts
-      alias update='sudo nix-channel --update'
-      alias upgrade='sudo nixos-rebuild switch'  # Will only work on NixOS
-      alias darwin-upgrade='sudo darwin-rebuild switch'  # Will only work on Darwin
+      ${lib.optionalString pkgs.stdenv.isLinux ''
+        alias update='sudo nix-channel --update'
+        alias upgrade='sudo nixos-rebuild switch'
+      ''}
+      ${lib.optionalString pkgs.stdenv.isDarwin ''
+        alias update='sudo nix-channel --update'
+        alias darwin-upgrade='sudo darwin-rebuild switch'
+      ''}
     '';
   };
 }

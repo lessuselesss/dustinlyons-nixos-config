@@ -43,10 +43,10 @@
     };
 
     # Commenting out secrets temporarily
-    # secrets = {
-    #   url = "git+ssh://git@github.com/lessuseless/nix-secrets.git";
-    #   flake = false;
-    # };
+    secrets = {
+      url = "git+ssh://git@github.com/lessuseless/nix-secrets.git";
+      flake = false;
+    };
 
     # apple-silicon-support = {
     #   url = "github:tpwrules/nixos-apple-silicon";
@@ -56,11 +56,6 @@
     # nix-on-droid = {
     #   url = "github:nix-community/nix-on-droid/release-24.05"; # Android support
     #   inputs.nixpkgs.follows = "nixpkgs"; # Maintains package consistency
-    # };
-
-    # johnny-mnemonix = {
-    #   url = "github:lessuselesss/johnny-mnemonix"; # Custom module source
-    #   inputs.nixpkgs.follows = "nixpkgs"; # Uses main packages
     # };
 
     pre-commit-hooks = {
@@ -84,7 +79,7 @@
     nixpkgs-stable,
     nixpkgs-unstable,
     pre-commit-hooks,
-    # secrets,  # Comment out from outputs
+    secrets, # Comment out from outputs
     agenix,
   } @ inputs: let
     adminUser = "admin";
@@ -100,22 +95,32 @@
         pre-commit-check = pre-commit-hooks.lib.${system}.run {
           src = ./.; # Current directory
           hooks = {
-            repomix-generator = {
-              enable = true;
-              name = "repomix-generator";
-              entry = "${pkgs.writeShellScript "generate-repomix" ''
-                ${pkgs.nodejs}/bin/node ${pkgs.nodePackages.npm}/bin/npx repomix .
-                git add repomix-output.txt
-              ''}";
-              files = ".*"; # Runs on all files
-              pass_filenames = false;
-            };
+            # Temporarily disabled: Was used to generate codebase overview when IDE couldn't show all files.
+            # Consider removing once IDE tooling improves or if a non-nodejs alternative is found.
+            # repomix-generator = {
+            #   enable = true;
+            #   name = "repomix-generator";
+            #   entry = "${pkgs.writeShellScript "generate-repomix" ''
+            #     ${pkgs.nodejs}/bin/node ${pkgs.nodePackages.npm}/bin/npx repomix .
+            #     git add repomix-output.txt
+            #   ''}";
+            #   files = ".*"; # Runs on all files
+            #   pass_filenames = false;
+            # };
 
             alejandra-lint = {
               enable = true;
               name = "alejandra-lint";
               entry = "${pkgs.alejandra}/bin/alejandra .";
               files = ".*"; # Formats all files
+              pass_filenames = false;
+            };
+
+            deadnix-lint = {
+              enable = true;
+              name = "deadnix-lint";
+              entry = "${pkgs.deadnix}/bin/deadnix .";
+              files = ".*"; # Checks for dead code
               pass_filenames = false;
             };
 
@@ -140,8 +145,7 @@
           age # Encryption tool
           age-plugin-yubikey # YubiKey support
           age-plugin-ledger # Ledger support
-          nodejs_23 # Node.js runtime
-          nodePackages.npm # Package manager
+          deadnix # Dead code elimination for Nix
         ];
         shellHook = ''
           ${mkPreCommitHook.pre-commit-check.shellHook}  # Setup pre-commit hooks

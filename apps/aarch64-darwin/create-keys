@@ -38,9 +38,40 @@ generate_key() {
   fi
 }
 
-setup_ssh_directory
-generate_key "id_ed25519"
-generate_key "id_ed25519_agenix"
+generate_gpg_key() {
+  local key_file="${SSH_DIR}/pgp_github.key"
+  if [[ -f "$key_file" ]]; then
+    echo -e "${RED}Existing GPG key found.${NC}"
+    read -p "Do you want to replace it? (y/n) " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+      echo -e "${GREEN}Kept existing GPG key.${NC}"
+      return
+    fi
+  fi
 
-echo -e "${GREEN}SSH key setup complete.${NC}"
-echo -e "${GREEN}Remember to add the necessary keys to Github or other services as required.${NC}"
+  # Generate GPG key with no passphrase
+  gpg --batch --gen-key <<EOF
+Key-Type: RSA
+Key-Length: 4096
+Name-Real: ${username}
+Name-Email: ${username}@github.com
+Expire-Date: 0
+%no-protection
+%commit
+EOF
+
+  # Export the latest key to the file
+  local key_id=$(gpg --list-secret-keys --keyid-format LONG | grep sec | tail -1 | cut -d'/' -f2 | cut -d' ' -f1)
+  gpg --export-secret-key --armor "$key_id" > "$key_file"
+  chown ${username}:staff "$key_file"
+  echo -e "${GREEN}GPG key generated and exported to ${key_file}${NC}"
+  echo -e "${GREEN}GPG key ID: ${key_id}${NC}"
+}
+
+setup_ssh_directory
+generate_key "id_github"
+generate_gpg_key
+
+echo -e "${GREEN}Key setup complete.${NC}"
+echo -e "${GREEN}Remember to add the public keys to Github and update your flake configuration.${NC}"

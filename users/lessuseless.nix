@@ -7,17 +7,17 @@
 
   home.packages = with pkgs; [
     # These belong in lessuseless's home-manager config
-    "emacs" # Your primary editor
-    "vscode" # Modern IDE
-    "cmake" # Build system
-    "pkg-config" # Build tool
-    "python312" # Python runtime
-    "nodejs_23" # Node.js runtime
-    "cargo" # Rust package manager
-    "nix-direnv" # Directory environments
-    "devenv" # Development environments
-    "jetbrains-mono" # Code font
-    "hack-font" # Code font
+    emacs # Your primary editor
+    vscode # Modern IDE
+    cmake # Build system
+    pkg-config # Build tool
+    python312 # Python runtime
+    nodejs_23 # Node.js runtime
+    cargo # Rust package manager
+    nix-direnv # Directory environments
+    devenv # Development environments
+    jetbrains-mono # Code font
+    hack-font # Code font
 
     # Development tools and fonts - everything needed for coding and UI work
     bun # JavaScript/TypeScript runtime and toolkit

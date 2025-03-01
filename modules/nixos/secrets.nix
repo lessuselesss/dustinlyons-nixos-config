@@ -9,7 +9,7 @@
 in {
   age = {
     identityPaths = [
-      "/home/${user}/.ssh/id_ed25519"
+      "/home/${user}/.ssh/id_github"
     ];
 
     # secrets = {
@@ -31,22 +31,23 @@ in {
     #     group = "users";
     #   };
 
-    #   "github-ssh-key" = {
-    #     symlink = false;
-    #     path = "/home/${user}/.ssh/id_github";
-    #     file =  "${secrets}/github-ssh-key.age";
-    #     mode = "600";
-    #     owner = "${user}";
-    #     group = "wheel";
-    #   };
+    secrets = {
+      "github-ssh-key" = {
+        symlink = true;
+        path = "/home/${user}/.ssh/id_github";
+        file = "${secrets}/github-ssh-key.age";
+        mode = "600";
+        owner = "${user}";
+        group = "users";
+      };
 
-    #   "github-signing-key" = {
-    #     symlink = false;
-    #     path = "/home/${user}/.ssh/pgp_github.key";
-    #     file =  "${secrets}/github-signing-key.age";
-    #     mode = "600";
-    #     owner = "${user}";
-    #     group = "wheel";
-    #   };
+      "github-signing-key" = {
+        symlink = false;
+        path = "/home/${user}/.ssh/pgp_github.key";
+        file = "${secrets}/github-signing-key.age";
+        mode = "600";
+        owner = "${user}";
+      };
+    };
   };
 }

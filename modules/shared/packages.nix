@@ -27,11 +27,11 @@ with pkgs; [
   btop
   bun
   cargo
-  claude
+  claude-code
   cmake
+  code-cursor
   coreutils
   curl
-  cursor
   dejavu_fonts
   deno
   devenv
@@ -65,9 +65,7 @@ with pkgs; [
   jpegoptim
   jq
   killall
-  kit
   lazydocker
-  ledger-live
   libfido2
   meslo-lgs-nf
   mods
@@ -96,24 +94,20 @@ with pkgs; [
   pkg-config
   pngquant
   polybar
-  python312.withPackages
-  (ps:
+  (python312.withPackages (ps:
     with ps; [
       black
-      python3
       virtualenv
       pip
       time-machine
-    ])
+    ]))
   qflipper
   ripgrep
-  screen-locker
   slack
   spacedrive
   sqlite
   ssm-session-manager-plugin
   tailscale
-  talon
   terraform
   terraform-ls
   tflint

@@ -43,12 +43,10 @@ in {
   system.checks.verifyNixPath = false;
 
   # Load configuration that is shared across systems
-  environment.systemPackages = with pkgs;
-    [
-      emacs-unstable
-      agenix.packages."${pkgs.system}".default
-    ]
-    ++ (import ../../modules/shared/packages.nix {inherit pkgs;});
+  environment.systemPackages = with pkgs; [
+    emacs-unstable
+    agenix.packages."${pkgs.system}".default
+  ];
 
   launchd.user.agents = {
     emacs = {
@@ -76,6 +74,8 @@ in {
 
       NSGlobalDomain = {
         AppleShowAllExtensions = true;
+
+        # Enable press-and-hold repeating
         ApplePressAndHoldEnabled = false;
 
         # 120, 90, 60, 30, 12, 6, 2
@@ -87,6 +87,33 @@ in {
         "com.apple.mouse.tapBehavior" = 1;
         "com.apple.sound.beep.volume" = 0.0;
         "com.apple.sound.beep.feedback" = 0;
+
+        # Auto hide the menubar
+        _HIHideMenuBar = true;
+
+        # Enable full keyboard access for all controls
+        #AppleKeyboardUIMode = 3;
+
+        # Disable "Natural" scrolling
+        "com.apple.swipescrolldirection" = false;
+
+        # Disable smart dash/period/quote substitutions
+        NSAutomaticDashSubstitutionEnabled = false;
+        NSAutomaticPeriodSubstitutionEnabled = false;
+        NSAutomaticQuoteSubstitutionEnabled = false;
+
+        # Disable automatic capitalization
+        NSAutomaticCapitalizationEnabled = false;
+
+        # Using expanded "save panel" by default
+        NSNavPanelExpandedStateForSaveMode = true;
+        NSNavPanelExpandedStateForSaveMode2 = true;
+
+        # Increase window resize speed for Cocoa applications
+        NSWindowResizeTime = 0.001;
+
+        # Save to disk (not to iCloud) by default
+        NSDocumentSaveNewDocumentsToCloud = true;
       };
 
       dock = {
@@ -111,49 +138,6 @@ in {
     keyboard = {
       enableKeyMapping = true;
       remapCapsLockToControl = true;
-    };
-    NSGlobalDomain = {
-      AppleShowAllExtensions = true;
-
-      # Enable press-and-hold repeating
-      ApplePressAndHoldEnabled = false;
-
-      # 120, 90, 60, 30, 12, 6, 2
-      KeyRepeat = 2;
-
-      # 120, 94, 68, 35, 25, 15
-      InitialKeyRepeat = 15;
-
-      "com.apple.mouse.tapBehavior" = 1;
-      "com.apple.sound.beep.volume" = 0.0;
-      "com.apple.sound.beep.feedback" = 0;
-
-      # Auto hide the menubar
-      _HIHideMenuBar = true;
-
-      # Enable full keyboard access for all controls
-      #AppleKeyboardUIMode = 3;
-
-      # Disable "Natural" scrolling
-      "com.apple.swipescrolldirection" = false;
-
-      # Disable smart dash/period/quote substitutions
-      NSAutomaticDashSubstitutionEnabled = false;
-      NSAutomaticPeriodSubstitutionEnabled = false;
-      NSAutomaticQuoteSubstitutionEnabled = false;
-
-      # Disable automatic capitalization
-      NSAutomaticCapitalizationEnabled = false;
-
-      # Using expanded "save panel" by default
-      NSNavPanelExpandedStateForSaveMode = true;
-      NSNavPanelExpandedStateForSaveMode2 = true;
-
-      # Increase window resize speed for Cocoa applications
-      NSWindowResizeTime = 0.001;
-
-      # Save to disk (not to iCloud) by default
-      NSDocumentSaveNewDocumentsToCloud = true;
     };
   };
 }

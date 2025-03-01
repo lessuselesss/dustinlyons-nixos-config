@@ -4,42 +4,15 @@
   ...
 }: let
   emacsOverlaySha256 = "06413w510jmld20i4lik9b36cfafm501864yq8k4vxl5r4hn0j0h";
+  sharedPackages = import ./packages.nix {inherit pkgs;};
 in {
-  # Define our zsh config with hardened
-  # security settings and sane defaults
+  # Define our zsh config with hardened security settings
   programs.zsh = {
-    enable = true;
-    enableCompletion = true;
-    enableBashCompletion = true;
-    autosuggestions.enable = true;
-    syntaxHighlighting.enable = true;
+    enable = true; # Only enable ZSH at system level
 
-    histSize = 10000;
-    histFile = "$HOME/.zsh_history";
-
-    setOptions = [
-      "HIST_FCNTL_LOCK"
-      "HIST_IGNORE_DUPS"
-      "HIST_IGNORE_SPACE"
-      "HIST_EXPIRE_DUPS_FIRST"
-      "HIST_FIND_NO_DUPS"
-      "HIST_VERIFY"
-      "EXTENDED_HISTORY"
-      "INC_APPEND_HISTORY"
-      "SHARE_HISTORY"
-      "NO_CLOBBER"
-      "BANG_HIST"
-      "INTERACTIVE_COMMENTS"
-      "HASH_CMDS"
-      "MAIL_WARNING"
-      "PATH_DIRS"
-      "PRINT_EXIT_VALUE"
-      "RM_STAR_WAIT"
-      "NO_FLOW_CONTROL"
-    ];
-
+    # Essential security settings and Nix environment
     shellInit = ''
-      # Security settings
+      # Security settings first
       umask 027
       limit coredumpsize 0
 
@@ -49,11 +22,19 @@ in {
         SAVEHIST=0
       fi
 
+      # Load nix environment if available - essential for all users
+      if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
+        . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+        . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
+      fi
+
       # Secure path
       typeset -U path
       path=($path[@])
     '';
   };
+
+  environment.systemPackages = sharedPackages;
 
   nixpkgs = {
     config = {

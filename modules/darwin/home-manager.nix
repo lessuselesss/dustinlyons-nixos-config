@@ -23,7 +23,7 @@ in {
     name = "${user}";
     home = "/Users/${user}";
     isHidden = false;
-    shell = pkgs.zsh;
+    shell = lib.mkForce pkgs.zsh;
   };
 
   homebrew = {
@@ -55,7 +55,7 @@ in {
 
   # Enable home-manager
   home-manager = {
-    useGlobalPkgs = true;
+    useGlobalPkgs = false;
     users.${user} = {
       pkgs,
       config,
@@ -72,26 +72,30 @@ in {
         ];
 
         stateVersion = "24.11";
-        nix.settings = {
-          substituters = [
-            "https://lessuseless.cachix.org"
-            "https://nix-community.cachix.org"
-            "https://cache.nixos.org"
-          ];
-          trusted-public-keys = [
-            "lessuselesss.cachix.org-1:nwRzA1J+Ze2nJAcioAfp77ifk8sncUi963WW2RExOwA="
-            "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-            "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-          ];
-        };
       };
 
-      programs = {} // import ../shared/home-manager.nix {inherit config pkgs lib;};
+      programs = lib.mkMerge [
+        (import ../shared/home-manager.nix {inherit config pkgs lib;}).programs
+      ];
 
       # Marked broken Oct 20, 2022 check later to remove this
       # https://github.com/nix-community/home-manager/issues/3344
       manual.manpages.enable = false;
     };
+  };
+
+  # System-level Nix settings
+  nix.settings = {
+    substituters = [
+      "https://lessuseless.cachix.org"
+      "https://nix-community.cachix.org"
+      "https://cache.nixos.org"
+    ];
+    trusted-public-keys = [
+      "lessuselesss.cachix.org-1:nwRzA1J+Ze2nJAcioAfp77ifk8sncUi963WW2RExOwA="
+      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+    ];
   };
 
   # Fully declarative dock using the latest from Nix Store
