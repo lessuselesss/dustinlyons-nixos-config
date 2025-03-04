@@ -107,9 +107,15 @@
                 autoMigrate = true;
               };
             }
-            ./hosts/darwin
-            ./users/lessuseless.nix
-            ./users/otherUser.nix
+          # Shared settings (including user aliasing)
+          ./modules/shared/default.nix
+
+          # User-specific configurations
+          ./users/admin.nix
+          ./users/lessuseless.nix
+
+          # Optional: Base macOS configuration
+          ./hosts/darwin.nix
           ];
         }
       );

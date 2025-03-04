@@ -320,17 +320,17 @@
     "secrets": {
       "flake": false,
       "locked": {
-        "lastModified": 1692124084,
-        "narHash": "sha256-2dCPd01ErApfbt1ooeaoDa5qRQcMxMsdKoiA6qfdJ6o=",
+        "lastModified": 1739616553,
+        "narHash": "sha256-mIoMFWbLNwgtt9iljF22I4YbaggKsitSRKsUnFUsBvY=",
         "ref": "refs/heads/main",
-        "rev": "f22586b10f0b04793073c661574f884f4031076c",
-        "revCount": 16,
+        "rev": "02b15ec730403c06e420ff8e24662e655d7653d0",
+        "revCount": 8,
         "type": "git",
-        "url": "ssh://git@github.com/dustinlyons/nix-secrets.git"
+        "url": "ssh://git@github.com/lessuselesss/nix-secrets.git"
       },
       "original": {
         "type": "git",
-        "url": "ssh://git@github.com/dustinlyons/nix-secrets.git"
+        "url": "ssh://git@github.com/lessuselesss/nix-secrets.git"
       }
     },
     "systems": {

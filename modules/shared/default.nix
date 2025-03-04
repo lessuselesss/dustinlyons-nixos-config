@@ -1,42 +1,40 @@
-{ config, pkgs, lib, ... }:
+{ config, 
+lib, 
+# options, 
+pkgs, 
+... }:
 
 let
-  emacsOverlaySha256 = "06413w510jmld20i4lik9b36cfafm501864yq8k4vxl5r4hn0j0h";
-  standardUsers = [
-    { name = "lessuseless"; }
-    { name = "ar4s"; }
-    # Add more users as needed
-  ];
-
-  userConfigs = lib.mapAttrs (user: attrs: {
-    isNormalUser = true;
-    home = if pkgs.stdenv.hostPlatform.isDarwin
-           then "/Users/${user}"
-           else "/home/${user}";
-    createHome = true;
-    hashedPassword = "<hashed-password>"; # Replace with the actual hashed password
-    extraGroups = [ "nix_staff" ];
-    shell = pkgs.bashInteractive;
-  }) (lib.listToAttrs standardUsers);
+  inherit (lib) mkAliasDefinitions mkOption types;
 in {
-  users.groups.nix_staff = { };
+  # Alias options for user and hm
+  options = {
+    user = mkOption {
+      description = "User configuration";
+      type = types.attrs;
+      default = {};
+    };
+    hm = mkOption {
+      type = types.attrs;
+      default = {};
+    };
+  };
 
-  users.users = lib.mkMerge [
-    userConfigs
-    {
-      admin = {
-        isNormalUser = true;
-        home = if pkgs.stdenv.hostPlatform.isDarwin
-               then "/Users/admin"
-               else "/home/admin";
-        createHome = true;
-        extraGroups = [ "wheel" ]; # 'wheel' group allows sudo access
-        hashedPassword = "<hashed-password>"; # Replace with the actual hashed password
-        shell = pkgs.bashInteractive;
-      };
-    }
-  ];
+  # Apply aliasing for each user (admin and lessuseless)
+  config = {
+    users.users.${config.user.name} = mkAliasDefinitions options.user;
+    home-manager.users.${config.user.name} = mkAliasDefinitions options.hm;
+  };
 
+  # Enable sudo for the wheel group
+  security.sudo = {
+    enable = true;
+    wheelNeedsPassword = true; # Requires password for sudo commands
+  };
+
+  # Other shared settings (e.g., system packages)
+  environment.systemPackages = with pkgs; [ git ];
+}
   # Ensure sudo privileges for members of the "wheel" group
   security.sudo = {
     enable = true;

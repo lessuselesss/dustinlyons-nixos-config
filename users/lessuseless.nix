@@ -1,11 +1,14 @@
-{ config, pkgs, ... }:
-
+{ config, lib, options, pkgs, ... }:
 {
-  home-manager.users.lessuseless = { pkgs, ... }: {
-    home.packages = with pkgs; [
-      # Add packages specific to lessuseless
-    ];
-
-    # Additional user-specific settings go here
+  user = {
+    name = "lessuseless";
+    isNormalUser = true;
+    home = "/Users/lessuseless";
+    hashedPassword = "<lessuseless-hashed-password>"; # Replace with actual hashed password
+    shell = pkgs.zsh;
+  };
+  hm = {
+    home.packages = with pkgs; [ firefox emacs curl ];
+    # Add more Home Manager settings here
   };
 }
