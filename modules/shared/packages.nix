@@ -50,6 +50,7 @@ with pkgs; [
   emacs-all-the-icons-fonts
   dejavu_fonts
   ffmpeg
+  rustup
   font-awesome
   hack-font
   jetbrains-mono
