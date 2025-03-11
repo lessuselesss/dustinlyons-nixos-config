@@ -13,6 +13,7 @@ with pkgs; [
   duf
   dust
   eza
+  cargo
   fd
   fh
   fzf
