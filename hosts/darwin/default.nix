@@ -18,8 +18,15 @@ let user = "lessuseless"; in
 
     settings = {
       trusted-users = [ "@admin" "${user}" ];
-      substituters = [ "https://nix-community.cachix.org" "https://cache.nixos.org" ];
-      trusted-public-keys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
+      substituters = [ 
+        "https://lessuselesss.cachix.org"
+        "https://nix-community.cachix.org" 
+        "https://cache.nixos.org" 
+      ];
+      trusted-public-keys = [ 
+        "lessuselesss.cachix.org-1:nwRzA1J+Ze2nJAcioAfp77ifk8sncUi963WW2RExOwA="
+        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" 
+      ];
     };
 
     #gc = {

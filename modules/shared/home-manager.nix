@@ -21,7 +21,7 @@ let name = "Ashley Barr";
           file = "p10k.zsh";
       }
     ];
-    initExtraFirst = ''
+    initExtraFirst = ''    
       if [[ -f /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]]; then
         . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
         . /nix/var/nix/profiles/default/etc/profile.d/nix.sh
@@ -31,6 +31,7 @@ let name = "Ashley Barr";
       export PATH=$HOME/.pnpm-packages/bin:$HOME/.pnpm-packages:$PATH
       export PATH=$HOME/.npm-packages/bin:$HOME/bin:$PATH
       export PATH=$HOME/.local/share/bin:$PATH
+      export PATH=$HOME/.local/bin:$PATH
 
       # Remove history data we don't want to see
       export HISTIGNORE="pwd:ls:cd"

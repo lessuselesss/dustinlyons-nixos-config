@@ -168,6 +168,15 @@
       fi
     fi
 
+    # if [[ -n $VCS_STATUS_LOCAL_BRANCH ]]; then
+    # local branch=${(V)VCS_STATUS_LOCAL_BRANCH}
+    # (( $#branch > 32 )) && branch[13,-13]="…"
+    # res+="${clean}${(g::)POWERLEVEL9K_VCS_BRANCH_ICON}${branch//\%/%%}"
+    # (( VCS_STATUS_HAS_CONFLICTED )) && res+="${conflicted}!"
+    # (( VCS_STATUS_HAS_STAGED || VCS_STATUS_HAS_UNSTAGED )) && res+="${modified}*"
+    # (( VCS_STATUS_HAS_UNTRACKED )) && res+="${untracked}?"
+    # fi
+
     if [[ -n $VCS_STATUS_TAG
           # Show tag only if not on a branch.
           && -z $VCS_STATUS_LOCAL_BRANCH  # <-- this line

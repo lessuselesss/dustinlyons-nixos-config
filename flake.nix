@@ -1,12 +1,30 @@
 {
   description = "Starter Configuration with secrets for MacOS and NixOS";
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
-    agenix.url = "github:ryantm/agenix";
-    home-manager.url = "github:nix-community/home-manager";
-    darwin = {
-      url = "github:LnL7/nix-darwin/master";
+    # Example of how to reference a FlakeHub package
+    # Replace "owner/repo/version" with the actual FlakeHub package you want to use
+    # example-flakehub-package = {
+    #   url = "https://flakehub.com/f/owner/repo/0.1.0.tar.gz";
+    # };
+    
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/nix/2.0";
+    
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/*";
+    nixpkgs-stable.url = "https://flakehub.com/f/NixOS/nixpkgs/*";
+    nixpkgs-unstable.url = "https://flakehub.com/f/NixOS/nixpkgs/0.1";
+
+    agenix.url = "https://flakehub.com/f/ryantm/agenix/0.14.0";
+
+    home-manager.url = "https://flakehub.com/f/nix-community/home-manager/0.2411.3881";
+
+    disko = {
+      url = "https://flakehub.com/f/nix-community/disko/1.11.0";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+    
+    darwin = {
+      url = "github:LnL7/nix-darwin/nix-darwin-24.11";
+      inputs.nixpkgs.follows = "nixpkgs-stable";
     };
     nix-homebrew = {
       url = "github:zhaofengli-wip/nix-homebrew";
@@ -23,16 +41,14 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     }; 
-    disko = {
-      url = "github:nix-community/disko";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     secrets = {
       url = "git+ssh://git@github.com/lessuselesss/nix-secrets.git?ref=main";
       flake = false;
     };
+    
+
   };
-  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, disko, agenix, secrets } @inputs:
+  outputs = { self, determinate, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, nixpkgs-stable, nixpkgs-unstable, disko, agenix, secrets } @inputs:
     let
       user = "lessuseless";
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
@@ -83,6 +99,7 @@
           inherit system;
           specialArgs = inputs;
           modules = [
+            determinate.nixosModules.default
             home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
             {
@@ -107,6 +124,7 @@
         inherit system;
         specialArgs = inputs;
         modules = [
+          determinate.nixosModules.default
           disko.nixosModules.disko
           home-manager.nixosModules.home-manager {
             home-manager = {

@@ -8,13 +8,32 @@ with pkgs; [
   bash-completion
   bat
   btop
+  cachix
   coreutils
+  duf
+  dust
+  eza
+  fd
+  fh
+  fzf
+  gping
+  hyperfine
   killall
+  mcfly
   neofetch
   openssh
+  procs
+  sd
   sqlite
+  tealdeer
   wget
+  xh
+  zoxide
   zip
+
+  # Git and version control
+  delta  # modern git diff
+  lazygit
 
   # Encryption and security tools
   age
@@ -26,16 +45,16 @@ with pkgs; [
   docker
   docker-compose
 
-  # Media-related packages
+  # Media and fonts
   emacs-all-the-icons-fonts
   dejavu_fonts
   ffmpeg
-  fd
   font-awesome
   hack-font
+  jetbrains-mono
+  meslo-lgs-nf
   noto-fonts
   noto-fonts-emoji
-  meslo-lgs-nf
 
   # Node.js development tools
   nodePackages.npm # globally install npm
@@ -46,7 +65,6 @@ with pkgs; [
   htop
   hunspell
   iftop
-  jetbrains-mono
   jq
   ripgrep
   tree

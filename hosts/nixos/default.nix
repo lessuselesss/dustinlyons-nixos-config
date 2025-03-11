@@ -43,8 +43,15 @@ let user = "lessuseless";
     settings = {
       allowed-users = [ "${user}" ];
       trusted-users = [ "@admin" "${user}" ];
-      substituters = [ "https://nix-community.cachix.org" "https://cache.nixos.org" ];
-      trusted-public-keys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
+      substituters = [ 
+        "https://lessuselesss.cachix.org"
+        "https://nix-community.cachix.org" 
+        "https://cache.nixos.org" 
+      ];
+      trusted-public-keys = [ 
+        "lessuselesss.cachix.org-1:nwRzA1J+Ze2nJAcioAfp77ifk8sncUi963WW2RExOwA="
+        "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" 
+      ];
     };
 
     package = pkgs.nix;
@@ -259,7 +266,7 @@ let user = "lessuseless";
     ${user} = {
       isNormalUser = true;
       extraGroups = [
-        "wheel" # Enable ‘sudo’ for the user.
+        "wheel" # Enable 'sudo' for the user.
         "docker"
       ];
       shell = pkgs.zsh;
