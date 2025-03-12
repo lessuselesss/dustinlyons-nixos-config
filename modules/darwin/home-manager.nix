@@ -42,6 +42,16 @@ in
     masApps = {
       #"1password" = 1333542190;
       #"wireguard" = 1451685025;
+      # "Gordian Seed Tool" = 1545088229;
+      # "DuckDuckGo" = 663592361;
+      # "Pure Paste" = 1611378436;
+      # "Shareful" = 1522267256;
+      # "Command X" = 6448461551;
+      # "One Thing" = 1604176982;
+      # "Folder Peek" = 1615988943;
+      # "Seed Tool" = 1545088229;
+      # # "Today" = 6443714928;
+      # "Refined GitHub" = 1519867270;
     };
   };
 
@@ -73,30 +83,41 @@ in
     dock = {
       enable = true;
       entries = [
-        { path = "/Applications/Slack.app/"; }
-        { path = "/System/Applications/Messages.app/"; }
-        { path = "/System/Applications/Facetime.app/"; }
-        { path = "${pkgs.alacritty}/Applications/Alacritty.app/"; }
-        { path = "/System/Applications/Music.app/"; }
-        { path = "/System/Applications/News.app/"; }
-        { path = "/System/Applications/Photos.app/"; }
-        { path = "/System/Applications/Photo Booth.app/"; }
-        { path = "/System/Applications/TV.app/"; }
-        { path = "/System/Applications/Home.app/"; }
         {
-          path = toString myEmacsLauncher;
-          section = "others";
+          path = "/nix/store/fnw3xx40cgqyxdpc82dm5gw2yri97xnw-alacritty-0.14.0/Applications/Alacritty.app/";
         }
+        {path = "${pkgs.emacs}/Applications/Emacs.app/";}
+
+        #{ path = "/Applications/Slack.app/"; }
+        #{ path = "/System/Applications/Messages.app/"; }
+        #{ path = "/System/Applications/Facetime.app/"; }
+        #{ path = "/Applications/Telegram.app/"; }
+        #{ path = "${pkgs.alacritty}/Applications/Alacritty.app/"; }
+        #{ path = "/System/Applications/Music.app/"; }
+        #{ path = "/System/Applications/News.app/"; }
+        #{ path = "/System/Applications/Photos.app/"; }
+        #{ path = "/System/Applications/Photo Booth.app/"; }
+        #{ path = "/System/Applications/TV.app/"; }
+        #{ path = "${pkgs.jetbrains.phpstorm}/Applications/PhpStorm.app/"; }
+        #{ path = "/Applications/TablePlus.app/"; }
+        #{ path = "/Applications/Asana.app/"; }
+        #{ path = "/Applications/Drafts.app/"; }
+        #{ path = "/System/Applications/Home.app/"; }
+        {path = "/Applications/iPhone Mirroring.app/";}
         {
-          path = "${config.users.users.${user}.home}/.local/share/";
-          section = "others";
-          options = "--sort name --view grid --display folder";
-        }
-        {
-          path = "${config.users.users.${user}.home}/.local/share/downloads";
-          section = "others";
-          options = "--sort name --view grid --display stack";
-        }
+            path = toString myEmacsLauncher;
+            section = "others";
+          }
+          {
+            path = "${config.users.users.${user}.home}/.local/share/";
+            section = "others";
+            options = "--sort name --view grid --display folder";
+          }
+          {
+            path = "${config.users.users.${user}.home}/.local/share/downloads";
+            section = "others";
+            options = "--sort name --view grid --display stack";
+          }
       ];
     };
   };

@@ -2,11 +2,13 @@
 
 with pkgs; [
   # General packages for development and system management
+  alejandra
   alacritty
   aspell
   aspellDicts.en
   bash-completion
   bat
+  bun
   btop
   cachix
   coreutils
@@ -16,11 +18,13 @@ with pkgs; [
   rustup
   fd
   fh
+  gh   
   fzf
   gping
   hyperfine
   killall
   mcfly
+  mods
   neofetch
   openssh
   procs
@@ -31,6 +35,10 @@ with pkgs; [
   xh
   zoxide
   zip
+  nix-direnv
+  devenv
+  uv
+  pass
 
   # Git and version control
   delta  # modern git diff
@@ -39,12 +47,14 @@ with pkgs; [
   # Encryption and security tools
   age
   age-plugin-yubikey
+  age-plugin-ledger
   gnupg
   libfido2
+  
 
   # Cloud-related tools and SDKs
-  docker
-  docker-compose
+  # docker
+  # docker-compose
 
   # Media and fonts
   emacs-all-the-icons-fonts
@@ -57,6 +67,7 @@ with pkgs; [
   meslo-lgs-nf
   noto-fonts
   noto-fonts-emoji
+  monaspace
 
   # Node.js development tools
   nodePackages.npm # globally install npm
@@ -74,6 +85,10 @@ with pkgs; [
   unrar
   unzip
   zsh-powerlevel10k
+  zsh-fzf-tab
+  warp-terminal
+  wireshark
+  tailscale
 
   # Python packages
   python3
