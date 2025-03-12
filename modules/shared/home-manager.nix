@@ -63,8 +63,11 @@ let name = "Ashley Barr";
 
       # Always color ls and group directories
       alias ls='ls --color=auto'
+
+      # Completions
     '';
   };
+  
 
   git = {
     enable = true;

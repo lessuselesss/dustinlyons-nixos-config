@@ -41,14 +41,22 @@
       url = "github:homebrew/homebrew-cask";
       flake = false;
     }; 
+    nix-index-database = {
+      url = "github:nix-community/nix-index-database";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     secrets = {
       url = "git+ssh://git@github.com/lessuselesss/nix-secrets.git?ref=main";
       flake = false;
     };
+    microvm.url = "github:astro/microvm.nix";
+    microvm.inputs.nixpkgs.follows = "nixpkgs";
+    #microvm.inputs.flake-utils.follows = "flake-utils";
+
     
 
   };
-  outputs = { self, determinate, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, nixpkgs-stable, nixpkgs-unstable, disko, agenix, secrets } @inputs:
+  outputs = { self, determinate, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, nixpkgs-stable, nixpkgs-unstable, nix-index-database, microvm, disko, agenix, secrets } @inputs:
     let
       user = "lessuseless";
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
@@ -102,6 +110,8 @@
             determinate.nixosModules.default
             home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
+            nix-index-database.darwinModules.nix-index
+            { programs.nix-index-database.comma.enable = true; }
             {
               nix-homebrew = {
                 inherit user;
@@ -126,6 +136,7 @@
         modules = [
           determinate.nixosModules.default
           disko.nixosModules.disko
+          microvm.nixosModules.microvm
           home-manager.nixosModules.home-manager {
             home-manager = {
               useGlobalPkgs = true;
