@@ -1,23 +1,41 @@
-{...}: {
-  services.yabai = {
-    enable = true;
-    config = {
-      # General settings
-      layout = "bsp";
-      insert_feedback_color = "0xffd75f5f";
-      split_ratio = 0.50;
-      split_type = "auto";
-      auto_balance = false;
+{
+  pkgs,
+  #userConfig,
+  lib,
+  config,
+  ...
+}: let
+  # inherit (userConfig) username;
+  # username = "lessuseless";
+in {
+  # <yabai />
 
-      # Window Spacing
-      top_padding = "3";
-      bottom_padding = "3";
-      left_padding = "3";
-      right_padding = "3";
-      window_gap = "3";
-
-      # Window Properties
-      window_shadow = "float";
+  services = {
+    yabai = {
+      enable = true;
+      package = pkgs.yabai;
+      config = {
+        layout = "bsp";
+        window_placement = "second_child";
+        window_opacity = "off";
+        window_shadow = "float";
+        window_gap = 6;
+        top_padding = 6;
+        bottom_padding = 6;
+        left_padding = 6;
+        right_padding = 6;
+        mouse_follows_focus = "off";
+        focus_follows_mouse = "off";
+        mouse_modifier = "fn";
+        mouse_action1 = "move";
+        mouse_action2 = "resize";
+        mouse_drop_action = "swap";
+      };
+      extraConfig = '''';
     };
   };
+
+  environment.etc."sudoers.d/yabai".text = ''
+    lessuseless ALL = (root) NOPASSWD: ${pkgs.yabai}/bin/yabai --load-sa
+  '';
 }
