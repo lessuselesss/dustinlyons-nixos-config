@@ -13,7 +13,6 @@ in
 {
   imports = [
    ./dock
-   ../shared/talon
   ];
 
   # It me
@@ -59,7 +58,9 @@ in
   # Enable home-manager
   home-manager = {
     useGlobalPkgs = true;
-    users.${user} = { pkgs, config, lib, ... }:{
+    users.${user} = { pkgs, config, lib, ... }: {
+      imports = [ ../shared/talon ];
+      
       home = {
         enableNixpkgsReleaseCheck = false;
         packages = pkgs.callPackage ./packages.nix {};
@@ -68,13 +69,19 @@ in
           additionalFiles
           { "emacs-launcher.command".source = myEmacsLauncher; }
         ];
-
         stateVersion = "23.11";
       };
-      programs = {} // import ../shared/home-manager.nix { inherit config pkgs lib; };
+      
+      programs = lib.mkMerge [
+        (import ../shared/home-manager.nix { inherit config pkgs lib; })
+        {
+          talon = {
+            enable = true;
+            userConfig = true;
+          };
+        }
+      ];
 
-      # Marked broken Oct 20, 2022 check later to remove this
-      # https://github.com/nix-community/home-manager/issues/3344
       manual.manpages.enable = false;
     };
   };
@@ -122,9 +129,5 @@ in
       ];
     };
   };
-
-  programs.talon = {
-    enable = true;
-    userConfig = true;
-  };
 }
+
