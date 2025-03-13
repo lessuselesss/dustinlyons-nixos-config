@@ -26,16 +26,16 @@ _:
   "secretive"
   "spacedrive"
   "bazecor"
-  
-  # Entertainment Tools
+  #"screenpipe"
 
+  # Entertainment Tools
 
   # Productivity Tools
   "raycast"
   "kindavim"
   "transmission"
   "jordanbaird-ice"
-  "mist-cli"
+  # "mist-cli"
 
   # Browsers
   "finicky"

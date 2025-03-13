@@ -16,9 +16,9 @@
     agenix.url = "https://flakehub.com/f/ryantm/agenix/0.14.0";
 
     home-manager.url = "https://flakehub.com/f/nix-community/home-manager/0.2411.3881";
-    flake-parts.url = "github:hercules-ci/flake-parts";
-    process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
-    services-flake.url = "github:juspay/services-flake";
+    #flake-parts.url = "github:hercules-ci/flake-parts";
+    #process-compose-flake.url = "github:Platonic-Systems/process-compose-flake";
+    #services-flake.url = "github:juspay/services-flake";
 
     disko = {
       url = "https://flakehub.com/f/nix-community/disko/1.11.0";
@@ -54,12 +54,10 @@
     };
     microvm.url = "github:astro/microvm.nix";
     microvm.inputs.nixpkgs.follows = "nixpkgs";
-    #microvm.inputs.flake-utils.follows = "flake-utils";
-
-    
+    #microvm.inputs.flake-utils.follows = "flake-utils";   
 
   };
-  outputs = inputs @ { self, flake-parts, process-compose-flake, services-flake, determinate, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, nixpkgs-stable, nixpkgs-unstable, nix-index-database, microvm, disko, agenix, secrets }:
+  outputs = inputs @ { self, determinate, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, nixpkgs-stable, nixpkgs-unstable, nix-index-database, microvm, disko, agenix, secrets }:
     let
       # Move these variable definitions to the top level
       user = "lessuseless";
@@ -96,95 +94,75 @@
         "check-keys" = mkApp "check-keys" system;
         "rollback" = mkApp "rollback" system;
       };
-    in
-    flake-parts.lib.mkFlake { inherit inputs; } {
-      imports = [
-        process-compose-flake.flakeModule
-      ];
       
+      # Define supported systems
       systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
       
-      perSystem = { config, self', inputs', pkgs, system, ... }: {
-        # Process-compose configuration
-        process-compose."myservices" = {
-          imports = [
-            services-flake.processComposeModules.default
-          ];
-          
-          # Enable and configure services here
-          services = {
-            # Example: Enable Redis service
-            redis."redis1" = {
-              enable = true;
-              # Redis-specific config
-            };
-            
-            # Add more services as needed
-          };
-        };
-        
-        # Your existing per-system configurations can go here
-        devShells.default = with pkgs; mkShell {
+      pkgs = nixpkgs.legacyPackages.${systems[0]};
+    in 
+    {
+      # Your devShell definition
+      devShells = nixpkgs.lib.genAttrs systems (system: 
+        let pkgs = nixpkgs.legacyPackages.${system}; in
+        pkgs.mkShell {
           nativeBuildInputs = with pkgs; [ bashInteractive git age age-plugin-yubikey ];
           shellHook = with pkgs; ''
             export EDITOR=vim
           '';
-        };
-      };
+        }
+      );
       
-      flake = {
-        # Your existing flake outputs
-        apps = 
-          inputs.nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // 
-          inputs.nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
-        
-        # Your Darwin configurations
-        darwinConfigurations = inputs.nixpkgs.lib.genAttrs darwinSystems (system:
-          darwin.lib.darwinSystem {
-            inherit system;
-            specialArgs = inputs;
-            modules = [
-              determinate.nixosModules.default
-              home-manager.darwinModules.home-manager
-              nix-homebrew.darwinModules.nix-homebrew
-              nix-index-database.darwinModules.nix-index
-              { programs.nix-index-database.comma.enable = true; }
-              {
-                nix-homebrew = {
-                  inherit user;
-                  enable = true;
-                  taps = {
-                    "homebrew/homebrew-core" = homebrew-core;
-                    "homebrew/homebrew-cask" = homebrew-cask;
-                    "homebrew/homebrew-bundle" = homebrew-bundle;
-                  };
-                  mutableTaps = false;
-                  autoMigrate = true;
-                };
-              }
-              ./hosts/darwin
-            ];
-          }
-        );
-        
-        # Your NixOS configurations
-        nixosConfigurations = inputs.nixpkgs.lib.genAttrs linuxSystems (system: nixpkgs.lib.nixosSystem {
+      # Your existing flake outputs
+      apps = 
+        inputs.nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // 
+        inputs.nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
+      
+      # Your Darwin configurations
+      darwinConfigurations = inputs.nixpkgs.lib.genAttrs darwinSystems (system:
+        darwin.lib.darwinSystem {
           inherit system;
           specialArgs = inputs;
           modules = [
             determinate.nixosModules.default
-            disko.nixosModules.disko
-            microvm.nixosModules.microvm
-            home-manager.nixosModules.home-manager {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                users.${user} = import ./modules/nixos/home-manager.nix;
+            home-manager.darwinModules.home-manager
+            nix-homebrew.darwinModules.nix-homebrew
+            nix-index-database.darwinModules.nix-index
+            { programs.nix-index-database.comma.enable = true; }
+            {
+              nix-homebrew = {
+                inherit user;
+                enable = true;
+                taps = {
+                  "homebrew/homebrew-core" = homebrew-core;
+                  "homebrew/homebrew-cask" = homebrew-cask;
+                  "homebrew/homebrew-bundle" = homebrew-bundle;
+                };
+                mutableTaps = false;
+                autoMigrate = true;
               };
             }
-            ./hosts/nixos
+            ./hosts/darwin
           ];
-        });
-      };
+        }
+      );
+      
+      # Your NixOS configurations
+      nixosConfigurations = inputs.nixpkgs.lib.genAttrs linuxSystems (system: nixpkgs.lib.nixosSystem {
+        inherit system;
+        specialArgs = inputs;
+        modules = [
+          determinate.nixosModules.default
+          disko.nixosModules.disko
+          microvm.nixosModules.microvm
+          home-manager.nixosModules.home-manager {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              users.${user} = import ./modules/nixos/home-manager.nix;
+            };
+          }
+          ./hosts/nixos
+        ];
+      });
     };
 }

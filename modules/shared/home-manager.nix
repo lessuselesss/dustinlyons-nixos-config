@@ -4,7 +4,14 @@ let name = "Ashley Barr";
     user = "lessuseless";
     email = "lessuseless@duck.com"; in
 {
-  # Shared shell configuration
+  imports = [ ./talon ];
+
+  direnv = {
+      enable = true;
+      enableZshIntegration = true;
+      nix-direnv.enable = true;
+  };
+
   zsh = {
     enable = true;
     autocd = false;
@@ -372,4 +379,9 @@ let name = "Ashley Barr";
       bind-key -T copy-mode-vi 'C-\' select-pane -l
       '';
     };
+
+  programs.talon = {
+    enable = true;
+    userConfig = true;
+  };
 }

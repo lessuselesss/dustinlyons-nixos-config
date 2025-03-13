@@ -19,6 +19,7 @@ with pkgs; [
   fd
   fh
   gh   
+  git-branchless
   fzf
   gping
   hyperfine
@@ -53,8 +54,8 @@ with pkgs; [
   
 
   # Cloud-related tools and SDKs
-  # docker
-  # docker-compose
+  docker
+  docker-compose
 
   # Media and fonts
   emacs-all-the-icons-fonts
