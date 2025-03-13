@@ -55,7 +55,6 @@
     microvm.url = "github:astro/microvm.nix";
     microvm.inputs.nixpkgs.follows = "nixpkgs";
     #microvm.inputs.flake-utils.follows = "flake-utils";   
-
   };
   outputs = inputs @ { self, determinate, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, nixpkgs-stable, nixpkgs-unstable, nix-index-database, microvm, disko, agenix, secrets }:
     let
@@ -98,12 +97,21 @@
       # Define supported systems
       systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
       
-      pkgs = nixpkgs.legacyPackages.${systems[0]};
+      # Define overlays
+      overlays = [
+        (import ./overlays/talon.nix)
+      ];
+      
+      # Create pkgs with overlays
+      pkgsFor = system: import nixpkgs {
+        inherit system overlays;
+        config.allowUnfree = true;
+      };
     in 
     {
       # Your devShell definition
       devShells = nixpkgs.lib.genAttrs systems (system: 
-        let pkgs = nixpkgs.legacyPackages.${system}; in
+        let pkgs = pkgsFor system; in
         pkgs.mkShell {
           nativeBuildInputs = with pkgs; [ bashInteractive git age age-plugin-yubikey ];
           shellHook = with pkgs; ''
@@ -127,7 +135,11 @@
             home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
             nix-index-database.darwinModules.nix-index
-            { programs.nix-index-database.comma.enable = true; }
+            { 
+              nixpkgs.overlays = overlays;
+              nixpkgs.config.allowUnfree = true;
+              programs.nix-index-database.comma.enable = true;
+            }
             {
               nix-homebrew = {
                 inherit user;
@@ -154,6 +166,10 @@
           determinate.nixosModules.default
           disko.nixosModules.disko
           microvm.nixosModules.microvm
+          {
+            nixpkgs.overlays = overlays;
+            nixpkgs.config.allowUnfree = true;
+          }
           home-manager.nixosModules.home-manager {
             home-manager = {
               useGlobalPkgs = true;
@@ -164,5 +180,8 @@
           ./hosts/nixos
         ];
       });
+
+      # Export the overlay
+      overlays.default = import ./overlays/talon.nix;
     };
 }

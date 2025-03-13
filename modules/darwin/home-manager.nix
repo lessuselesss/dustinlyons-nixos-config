@@ -59,8 +59,6 @@ in
   home-manager = {
     useGlobalPkgs = true;
     users.${user} = { pkgs, config, lib, ... }: {
-      imports = [ ../shared/talon ];
-      
       home = {
         enableNixpkgsReleaseCheck = false;
         packages = pkgs.callPackage ./packages.nix {};
@@ -69,18 +67,10 @@ in
           additionalFiles
           { "emacs-launcher.command".source = myEmacsLauncher; }
         ];
-        stateVersion = "23.11";
+        stateVersion = "24.11";
       };
       
-      programs = lib.mkMerge [
-        (import ../shared/home-manager.nix { inherit config pkgs lib; })
-        {
-          talon = {
-            enable = true;
-            userConfig = true;
-          };
-        }
-      ];
+      programs = import ../shared/home-manager.nix { inherit config pkgs lib; };
 
       manual.manpages.enable = false;
     };

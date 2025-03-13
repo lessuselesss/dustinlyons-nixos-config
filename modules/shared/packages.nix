@@ -12,6 +12,7 @@ with pkgs; [
   btop
   cachix
   coreutils
+  clipboard-jh
   duf
   dust
   eza
@@ -40,6 +41,10 @@ with pkgs; [
   devenv
   uv
   pass
+  talon  # Now available through the overlay
+  nodePackages.npm # globally install npm
+  nodePackages.prettier
+  nodejs
 
   # Git and version control
   delta  # modern git diff
@@ -69,11 +74,6 @@ with pkgs; [
   noto-fonts
   noto-fonts-emoji
   monaspace
-
-  # Node.js development tools
-  nodePackages.npm # globally install npm
-  nodePackages.prettier
-  nodejs
 
   # Text and terminal utilities
   htop

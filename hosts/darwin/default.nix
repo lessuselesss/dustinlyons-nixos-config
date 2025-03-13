@@ -10,6 +10,33 @@ let user = "lessuseless"; in
     ../../modules/shared
      agenix.darwinModules.default
   ];
+  
+  services = {
+    #    nix-daemon.enable = true;
+    sketchybar = {
+      enable = true;
+      extraPackages = with pkgs; [
+        jankyborders
+        nushell
+      ];
+    };
+
+    jankyborders = {
+      enable = true;
+      blur_radius = 5.0;
+      hidpi = true;
+      active_color = "0xFFFF69B4";
+      # active_color = "0xAAB279A7";
+      # background_color = "0xAAB279A7";
+      inactive_color = "0x33867A74";
+      # width = "5.0";
+    };
+
+    tailscale = {
+      enable = true; # false = Using App Store application
+      overrideLocalDns = true;
+    };
+  };
 
   # Setup user, packages, programs
   nix = {
