@@ -13,6 +13,7 @@ in
 {
   imports = [
    ./dock
+   ../shared/talon
   ];
 
   # It me
@@ -120,5 +121,10 @@ in
           }
       ];
     };
+  };
+
+  programs.talon = {
+    enable = true;
+    userConfig = true;
   };
 }

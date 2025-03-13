@@ -4,8 +4,6 @@ let name = "Ashley Barr";
     user = "lessuseless";
     email = "lessuseless@duck.com"; in
 {
-  imports = [ ./talon ];
-
   direnv = {
       enable = true;
       enableZshIntegration = true;
@@ -379,9 +377,4 @@ let name = "Ashley Barr";
       bind-key -T copy-mode-vi 'C-\' select-pane -l
       '';
     };
-
-  programs.talon = {
-    enable = true;
-    userConfig = true;
-  };
 }
