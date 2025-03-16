@@ -63,6 +63,15 @@
       user = "lessuseless";
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
       darwinSystems = [ "aarch64-darwin" "x86_64-darwin" ];
+      forAllSystems = f: nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) f;
+      devShell = system: let pkgs = nixpkgs.legacyPackages.${system}; in {
+        default = with pkgs; mkShell {
+          nativeBuildInputs = with pkgs; [ bashInteractive git age age-plugin-yubikey ];
+          shellHook = with pkgs; ''
+            export EDITOR=vim
+          '';
+        };
+      };
       
       # Define the mkApp function at the top level
       mkApp = scriptName: system: {
@@ -95,34 +104,39 @@
         "rollback" = mkApp "rollback" system;
       };
       
+      # TODO: Re-implement forAllSytems instead
       # Define supported systems
-      systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
+      # systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
       
+      # reference the TODO regarding overlays at the bottom of this flake
       # Define overlays
-      overlays = [
-        (import ./overlays/talon.nix)
-      ];
+      # overlays = [
+      #   (import ./overlays/talon.nix)
+      # ];
       
       # Create pkgs with overlays
-      pkgsFor = system: import nixpkgs {
-        inherit system overlays;
-        config.allowUnfree = true;
-      };
+      # pkgsFor = system: import nixpkgs {
+      #   inherit system overlays;
+      #   config.allowUnfree = true;
+      # };
     in 
     {
+      # TODO: simplify the devshell defnition below
+      # It looks like cursor broke this down so instead of using a 
+      # simple "devShells = forAllSystems devShell;" we have the following
       # Your devShell definition
-      devShells = nixpkgs.lib.genAttrs systems (system: 
-        let pkgs = pkgsFor system; in
-        {
-          default = pkgs.mkShell {
-            nativeBuildInputs = with pkgs; [ bashInteractive git age age-plugin-yubikey ];
-            shellHook = with pkgs; ''
-              export EDITOR=vim
-            '';
-          };
-        }
-      );
-      
+      # devShells = nixpkgs.lib.genAttrs systems (system: 
+      #   let pkgs = pkgsFor system; in
+      #   {
+      #     pkgs.mkShell {
+      #       nativeBuildInputs = with pkgs; [ bashInteractive git age age-plugin-yubikey ];
+      #       shellHook = with pkgs; ''
+      #         export EDITOR=vim
+      #       '';
+      #     };
+      #   }
+      # );
+      devShells = forAllSystems devShell;
       # Your existing flake outputs
       apps = 
         inputs.nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // 
@@ -140,7 +154,8 @@
             nix-index-database.darwinModules.nix-index
             # TODO: migrate nix-index to shared home-manager config
             { 
-              nixpkgs.overlays = overlays;
+              # reference the TODO regarding overlays at the bottom of this flake
+              # nixpkgs.overlays = overlays; 
               nixpkgs.config.allowUnfree = true;
               programs.nix-index-database.comma.enable = true;
               
@@ -173,7 +188,7 @@
           disko.nixosModules.disko
           microvm.nixosModules.microvm
           {
-            nixpkgs.overlays = overlays;
+            # nixpkgs.overlays = overlays;
             nixpkgs.config.allowUnfree = true;
           }
           home-manager.nixosModules.home-manager {
@@ -186,8 +201,10 @@
           ./hosts/nixos
         ];
       });
-
+      # TODO: Overlays are not defined at the flake level in the 
+      # upstream flake. Investigate how to get this working with 
+      # the /overlays directory at the root of this repo.
       # Export the overlay
-      overlays.default = import ./overlays/talon.nix;
+      # overlays.default = import ./overlays/talon.nix;
     };
 }
