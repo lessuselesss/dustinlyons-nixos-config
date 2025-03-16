@@ -35,7 +35,7 @@ let user = "lessuseless"; in
 
     tailscale = {
       enable = true; # false = Using App Store application
-      overrideLocalDns = true;
+      overrideLocalDns = false; # false if you want to use netowrking.dns declarations
     };
   };
 
@@ -81,6 +81,21 @@ let user = "lessuseless"; in
     ];
     StandardErrorPath = "/tmp/emacs.err.log";
     StandardOutPath = "/tmp/emacs.out.log";
+  };
+
+  networking = {
+    knownNetworkServices = [
+      "Wi-Fi" 
+      #"Bluetooth PAN" 
+      "Thunderbolt Bridge"
+      "Raise"
+      ];
+    dns = [
+      "1.1.1.1" 
+      "1.0.0.1" 
+      "2606:4700:4700::1111" 
+      "2606:4700:4700::1001"
+      ];
   };
 
   system = {

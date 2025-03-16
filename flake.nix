@@ -134,10 +134,11 @@
           inherit system;
           specialArgs = inputs;
           modules = [
-            determinate.nixosModules.default
+            # determinate.nixosModules.default  # this might not supposed to be here.
             home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
             nix-index-database.darwinModules.nix-index
+            # TODO: migrate nix-index to shared home-manager config
             { 
               nixpkgs.overlays = overlays;
               nixpkgs.config.allowUnfree = true;

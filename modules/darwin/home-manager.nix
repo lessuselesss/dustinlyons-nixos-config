@@ -70,18 +70,19 @@ in
           sharedFiles
           additionalFiles
           { "emacs-launcher.command".source = myEmacsLauncher; }
-          {
-            ".config/Cursor/mcp-config.json".text = ''
-              {
-                "mcpServers": {
-                  "filesystem": {
-                    "command": "npx",
-                    "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/${user}/Projects", "/Users/${user}/Documents"]
-                  }
-                }
-              }
-            '';
-          }
+          # commenting out as I try to add nix-mcp-servers to this flake
+          # {
+          #   ".config/cursor/mcp-config.json".text = ''
+          #     {
+          #       "mcpServers": {
+          #         "filesystem": {
+          #           "command": "npx",
+          #           "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/${user}/Projects", "/Users/${user}/Documents"]
+          #         }
+          #       }
+          #     }
+          #   '';
+          # }
         ];
         stateVersion = "24.11";
       };
