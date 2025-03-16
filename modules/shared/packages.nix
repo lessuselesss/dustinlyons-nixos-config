@@ -12,6 +12,7 @@ with pkgs; [
   btop
   cachix
   coreutils
+  wrangler
   clipboard-jh
   duf
   dust

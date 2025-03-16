@@ -59,6 +59,10 @@ in
   home-manager = {
     useGlobalPkgs = true;
     users.${user} = { pkgs, config, lib, ... }: {
+      imports = [
+        # ../../inputs/mcp-servers/modules/home-manager
+      ];
+      
       home = {
         enableNixpkgsReleaseCheck = false;
         packages = pkgs.callPackage ./packages.nix {};
@@ -66,6 +70,18 @@ in
           sharedFiles
           additionalFiles
           { "emacs-launcher.command".source = myEmacsLauncher; }
+          {
+            ".config/Cursor/mcp-config.json".text = ''
+              {
+                "mcpServers": {
+                  "filesystem": {
+                    "command": "npx",
+                    "args": ["-y", "@modelcontextprotocol/server-filesystem", "/Users/${user}/Projects", "/Users/${user}/Documents"]
+                  }
+                }
+              }
+            '';
+          }
         ];
         stateVersion = "24.11";
       };

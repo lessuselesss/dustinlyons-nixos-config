@@ -204,6 +204,40 @@ let name = "Ashley Barr";
       '';
      };
 
+  # MCP servers configuration
+  # mcp-servers = {
+  #   enable = true; # Enable the entire module
+  #   
+  #   servers = {
+  #     filesystem = {
+  #       # command = "npx"; # Uses default
+  #       filesystem = {
+  #         # args = [ "-y" "@modelcontextprotocol/server-filesystem" ]; # Uses default
+  #         extraArgs = [ "/Users/${user}/.local/documents" ]; # REQUIRED
+  #       };
+  #     };
+  #     
+  #     # github = {
+  #     #   env = {
+  #     #     GITHUB_PERSONAL_ACCESS_TOKEN = "xxxxxxxxxxxxxxx"; # REQUIRED through assertion
+  #     #   };
+  #     # };
+  #   };
+  #   
+  #   clients = {
+  #     claude = {
+  #       enable = true; # Using standard Nix 'enable' flag
+  #       # clientType defaults to "claudeDesktop" based on name
+  #       servers = [ "filesystem" ];
+  #     };
+  #     
+  #     cursor = {
+  #       enable = true; # Enable Cursor configuration
+  #       servers = [ "filesystem" ]; # Only use filesystem server for Cursor
+  #     };
+  #   };
+  # };
+
   alacritty = {
     enable = true;
     settings = {
@@ -278,16 +312,22 @@ let name = "Ashley Barr";
       (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin
         "/Users/${user}/.ssh/config_external"
       )
+      (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin
+        "/Users/${user}/.ssh/config.local"
+      )
+      (lib.mkIf pkgs.stdenv.hostPlatform.isLinux
+        "/home/${user}/.ssh/config.local"
+      )
     ];
     matchBlocks = {
       "github.com" = {
         identitiesOnly = true;
         identityFile = [
           (lib.mkIf pkgs.stdenv.hostPlatform.isLinux
-            "/home/${user}/.ssh/id_github"
+            "/home/${user}/.ssh/id_ed25519"
           )
           (lib.mkIf pkgs.stdenv.hostPlatform.isDarwin
-            "/Users/${user}/.ssh/id_github"
+            "/Users/${user}/.ssh/id_ed25519"
           )
         ];
       };
