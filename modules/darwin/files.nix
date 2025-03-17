@@ -38,8 +38,12 @@ in
       {
         "mcpServers": {
            "filesystem": {
-            "command": "/bin/sh",
-            "args":  ["-c", "PATH=/run/current-system/sw/bin:$PATH exec npx -y @modelcontextprotocol/server-filesystem ${documents_dir}"]
+            "command": "npx",
+            "args":  [
+            "-y",
+            "@modelcontextprotocol/server-filesystem",
+            "${documents_dir}"
+            ]
           }
         }
       }

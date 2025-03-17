@@ -1,8 +1,20 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, inputs ? {}, ... }:
 
-let name = "Ashley Barr";
-    user = "lessuseless";
-    email = "lessuseless@duck.com"; in
+let 
+  name = "Ashley Barr";
+  user = "lessuseless";
+  email = "lessuseless@duck.com";
+  
+  # Helper function to generate managed directory configurations
+  mkManagedDir = { source, target, recursive ? true, postProcessCommand ? null }: 
+    {
+      "${target}" = {
+        source = source;
+        recursive = recursive;
+      } // (if postProcessCommand != null then { onChange = postProcessCommand; } else {});
+    };
+    
+in
 {
   direnv = {
       enable = true;
@@ -417,4 +429,7 @@ let name = "Ashley Barr";
       bind-key -T copy-mode-vi 'C-\' select-pane -l
       '';
     };
-}
+  }
+
+
+

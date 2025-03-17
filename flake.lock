@@ -245,6 +245,22 @@
         "url": "https://flakehub.com/f/nix-community/home-manager/0.2411.3881"
       }
     },
+    "home-office": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1742245023,
+        "narHash": "sha256-LxBgihV6iDGJrFroOGXiC3akOPNWPV/YeXizDODI1+Q=",
+        "ref": "refs/heads/main",
+        "rev": "4e2bb619226ea28fa90ee2059f4aaa990e19c1ad",
+        "revCount": 1,
+        "type": "git",
+        "url": "ssh://git@github.com/lessuselesss/home-office.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/lessuselesss/home-office.git"
+      }
+    },
     "homebrew-bundle": {
       "flake": false,
       "locked": {
@@ -567,6 +583,7 @@
         "determinate": "determinate",
         "disko": "disko",
         "home-manager": "home-manager_2",
+        "home-office": "home-office",
         "homebrew-bundle": "homebrew-bundle",
         "homebrew-cask": "homebrew-cask",
         "homebrew-core": "homebrew-core",
@@ -576,7 +593,24 @@
         "nixpkgs": "nixpkgs_7",
         "nixpkgs-stable": "nixpkgs-stable",
         "nixpkgs-unstable": "nixpkgs-unstable",
+        "sane-defaults": "sane-defaults",
         "secrets": "secrets"
+      }
+    },
+    "sane-defaults": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1742245059,
+        "narHash": "sha256-LxBgihV6iDGJrFroOGXiC3akOPNWPV/YeXizDODI1+Q=",
+        "owner": "lessuselesss",
+        "repo": "sane-defaults",
+        "rev": "7b91bc1282afe690b2fe41ab2a1f1903d20556d5",
+        "type": "github"
+      },
+      "original": {
+        "owner": "lessuselesss",
+        "repo": "sane-defaults",
+        "type": "github"
       }
     },
     "secrets": {

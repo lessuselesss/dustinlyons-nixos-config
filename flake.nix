@@ -56,8 +56,19 @@
     microvm.inputs.nixpkgs.follows = "nixpkgs";
     #microvm.inputs.flake-utils.follows = "flake-utils";
 
+    # Declarative Directories 
+    sane-defaults = {
+      url = "github:lessuselesss/sane-defaults";
+      flake = false;
+    };
+
+    home-office = {
+      url = "git+ssh://git@github.com/lessuselesss/home-office.git";
+      flake = false;
+    };
+
   };
-  outputs = inputs @ { self, determinate, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, nixpkgs-stable, nixpkgs-unstable, nix-index-database, microvm, disko, agenix, secrets }:
+  outputs = inputs @ { self, determinate, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, nixpkgs-stable, nixpkgs-unstable, nix-index-database, microvm, disko, agenix, secrets, home-office, sane-defaults}:
     let
       # Move these variable definitions to the top level
       user = "lessuseless";
