@@ -31,8 +31,12 @@
       url = "git+ssh://git@github.com/dustinlyons/nix-secrets.git";
       flake = false;
     };
+    nix-mcp-servers = {
+      url = "github:aloshy-ai/nix-mcp-servers";
+    };
+
   };
-  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, disko, agenix, secrets } @inputs:
+  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, disko, agenix, secrets, nix-mcp-servers } @inputs:
     let
       user = "dustin";
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
