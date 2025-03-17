@@ -8,6 +8,7 @@ let
   # MPC Client Config Paths
   claude_desktop_path = "${config.users.users.${user}.home}/Library/Application Support/Claude/claude_desktop_config.json";
   cursor_path = "${config.users.users.${user}.home}/.cursor/mcp.json";
+  githubToken = builtins.getEnv "GITHUB_PERSONAL_ACCESS_TOKEN";
   
   # Documents directory for MCP
   documents_dir = "${xdg_dataHome}/documents";
@@ -17,7 +18,7 @@ in
   "${documents_dir}/.keep" = {
     text = "";
   };
-
+  
   # Claude MCP Client Config
   "${claude_desktop_path}" = {
     text = ''
@@ -26,6 +27,13 @@ in
           "filesystem": {
             "command": "/bin/sh",
             "args":  ["-c", "PATH=/run/current-system/sw/bin:$PATH exec npx -y @modelcontextprotocol/server-filesystem ${documents_dir}"]
+          },
+          "github": {
+            "command": "/bin/sh",
+            "args":  ["-c", "PATH=/run/current-system/sw/bin:$PATH exec npx -y @modelcontextprotocol/server-github ${documents_dir}"],
+            "env": {
+              "GITHUB_PERSONAL_ACCESS_TOKEN": "${githubToken}"
+            }
           }
         }
       }

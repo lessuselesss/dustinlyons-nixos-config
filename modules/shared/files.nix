@@ -32,4 +32,14 @@ in
   ".ssh/pgp_github.pub" = {
     text = githubPublicSigningKey;
   };
+
+  ".config/talon/user" = {
+        source = pkgs.fetchFromGitHub {
+          owner = "lessuselesss";  # GitHub username
+          repo = "talonhub-community";  # Repository name
+          rev = "main";  # Specify the branch or commit you want to fetch
+          sha256 = "sha256-JrHuEEH3cD7iXAxhhJGbsjgwmuQid5vDGYO/H3GiUAE=";  # Replace with the actual SHA256 hash
+        };
+        recursive = true;  # Copy the entire directory recursively
+      };
 }
