@@ -55,9 +55,9 @@
     microvm.url = "github:astro/microvm.nix";
     microvm.inputs.nixpkgs.follows = "nixpkgs";
     #microvm.inputs.flake-utils.follows = "flake-utils";
-    mcp-servers.url = "github:aloshy-ai/nix-mcp-servers";   
+
   };
-  outputs = inputs @ { self, determinate, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, nixpkgs-stable, nixpkgs-unstable, mcp-servers, nix-index-database, microvm, disko, agenix, secrets }:
+  outputs = inputs @ { self, determinate, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, nixpkgs-stable, nixpkgs-unstable, nix-index-database, microvm, disko, agenix, secrets }:
     let
       # Move these variable definitions to the top level
       user = "lessuseless";
