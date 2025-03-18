@@ -16,6 +16,10 @@ let
     
 in
 {
+
+  # This only seems to be defined here, and direnv
+  # does not appear to be brought in from nixpkgs
+  # from the upstream flake (for e.g. in packages.nix)
   direnv = {
       enable = true;
       enableZshIntegration = true;

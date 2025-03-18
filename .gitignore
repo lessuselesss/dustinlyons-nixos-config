@@ -2,3 +2,7 @@
 *.swp
 result
 .DS_Store
+.envrc
+envrc
+.direnv*
+.direnv/

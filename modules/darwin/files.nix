@@ -34,6 +34,10 @@ in
             "env": {
               "GITHUB_PERSONAL_ACCESS_TOKEN": "${githubToken}"
             }
+          },
+          "git": {
+            "command": "/bin/sh",
+            "args": ["-c", "PATH=/run/current-system/sw/bin:$PATH exec uvx mcp-server-git --repository ${documents_dir}"]
           }
         }
       }

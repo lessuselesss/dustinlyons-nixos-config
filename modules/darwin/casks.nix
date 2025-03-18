@@ -7,7 +7,7 @@ _:
   "msty"
   "ollama"
   # Development Tools
-  "homebrew/cask/docker"
+  # "homebrew/cask/docker"
   "visual-studio-code"
   "orbstack"
   "talon"

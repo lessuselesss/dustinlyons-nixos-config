@@ -36,11 +36,14 @@ with pkgs; [
   tealdeer
   wget
   xh
-  zoxide
+  zoxide 
   zip
-  nix-direnv
+  # defined in /modules/shared/home-manager.nix and /modules/nixos/
+  # not sure why direnv is not included in /modules/shared/ or /modules/darwin/
+  #nix-direnv 
   devenv
   uv
+  pipx
   pass
   talon  # Now available through the overlay
   nodePackages.npm # globally install npm
@@ -60,9 +63,10 @@ with pkgs; [
   
 
   # Cloud-related tools and SDKs
-  docker
-  docker-compose
-
+  #docker
+  #docker-compose
+  podman
+  podman-compose
   # Media and fonts
   emacs-all-the-icons-fonts
   dejavu_fonts
