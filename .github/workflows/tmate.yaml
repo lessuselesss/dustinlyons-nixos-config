@@ -1,0 +1,63 @@
+name: Run Actions Batch with nix-shell
+
+on:
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
+        type: boolean
+        required: false
+        default: true
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Install Nix
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+
+      # Handle GitHub Token for GitHub Actions or local act runs
+      - name: Use GitHub Token or .env (act -s ...)
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "Running on GitHub Actions"
+            echo "Token: ${{ secrets.GH_TOKEN }}"
+          else
+            echo "Running locally with act"
+            echo "Token: $GH_TOKEN"
+          fi
+
+      # Run the actions-batch script
+      - name: Run time-share workload
+        run: |
+          actions-batch \
+            --private \
+            --owner lessuselesss \
+            --token-file \
+            --runs-on ubuntu-latest \
+            --file examples/cowsay.sh
+
+      # Enable debug shell access if debug_enabled is true
+      - name: Enable Shell Access
+        if: ${{ always() && github.event_name == 'workflow_dispatch' && inputs.debug_enabled }}
+        run: |
+          set -x
+          RELAY=relay.tunshell.com
+          SECRET=0000000000000000000000
+          KEYS=$(curl -sSf -X POST https://relay.tunshell.com/api/sessions)
+          echo "$KEYS" | jq -r '.peer1_key' > peer1
+          echo "$KEYS" | jq -r '.peer2_key' > peer2
+          (while true; do
+            echo "Connect to GitHub Actions node using: sh <(curl -sSf https://lets.tunshell.com/init.sh) L $(cat peer2) $SECRET $RELAY"
+            echo "Or: https://tunshell.com/term#$(cat peer2),$SECRET,$RELAY"
+            sleep 1
+          done) &
+          curl -sSf https://lets.tunshell.com/init.sh | sh -s -- T $(cat peer1) $SECRET $RELAY
