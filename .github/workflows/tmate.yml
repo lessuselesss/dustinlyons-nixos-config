@@ -1,0 +1,58 @@
+name: Run Actions Batch with nix-shell
+
+on:
+  workflow_dispatch:
+    inputs:
+      debug_enabled:
+        description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'     
+        required: false
+        default: true
+
+env:
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - name: Enable Shell Access
+        #if: ${{ always() && github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Use GitHub Token OR .env (act -s ...)
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "Running on GitHub Actions"
+            echo ${{ secrets.GH_TOKEN }}
+          else
+            echo "Running locally with act"
+            echo $GH_TOKEN
+
+      - name: Run time-share workload
+        run: |
+          # actions-batch             \
+          #   --private               \
+          #   --owner lessuselesss    \
+          #   --token-file            \
+          #   --runs-on ubuntu-latest \
+          #   --file examples/cowsay.sh
+          # # git clone https://github.com/alyraffauf/cosmic-nixos-iso && cd cosmic-nixos-iso 
+          # # nix  --experimental-features 'nix-command flakes' build github.com:alyraffauf/cosmic-nixos-iso#nixosConfigurations.cosmicIso.config.system.build.isoImage
+     
+      - name: Enable Shell Access
+        if: ${{ always() && github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
+        run: |
+          set -x
+          RELAY=relay.tunshell.com
+          SECRET=0000000000000000000000
+          KEYS=$(curl -sSf -X POST https://relay.tunshell.com/api/sessions); echo $KEYS | jq -r '.peer1_key' > peer1; echo $KEYS | jq -r '.peer2_key' > peer2;
+          (while true; do
+            echo "Connect to GitHub Actions node using: sh <(curl -sSf https://lets.tunshell.com/init.sh) L $(cat peer2) 0000000000000000000000 $RELAY"
+            echo "Or: https://tunshell.com/term#$(cat peer2),$SECRET,$RELAY"
+            sleep 1
+          done) &
+          curl -sSf https://lets.tunshell.com/init.sh | sh -s -- T $(cat peer1) $SECRET $RELAY
+          #powershell '[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12; &$([scriptblock]::Create((New-Object System.Net.WebClient).DownloadString("htt[...]
