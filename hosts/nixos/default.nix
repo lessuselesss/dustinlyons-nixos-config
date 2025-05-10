@@ -1,6 +1,6 @@
 { config, inputs, lib, pkgs, agenix, ... }:
 
-let user = "dustin";
+let user = "lessuseless";
     keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p" ]; in
 {
   imports = [
@@ -25,7 +25,7 @@ let user = "dustin";
   };
 
   # Set your time zone.
-  time.timeZone = "America/New_York";
+  time.timeZone = "America/Mexico_City";
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
@@ -66,17 +66,17 @@ let user = "dustin";
     xserver = {
       enable = true;
 
-      videoDrivers = [ "nvidia" ];
+      #videoDrivers = [ "nvidia" ];
 
-      # This helps fix tearing of windows for Nvidia cards
-      screenSection = ''
-        Option       "metamodes" "nvidia-auto-select +0+0 {ForceFullCompositionPipeline=On}"
-        Option       "AllowIndirectGLXProtocol" "off"
-        Option       "TripleBuffer" "on"
-      '';
+      ## This helps fix tearing of windows for Nvidia cards
+      #screenSection = ''
+      #  Option       "metamodes" "nvidia-auto-select +0+0 {ForceFullCompositionPipeline=On}"
+      #  Option       "AllowIndirectGLXProtocol" "off"
+      #  Option       "TripleBuffer" "on"
+      #'';
 
       # LightDM Display Manager
-      displayManager.defaultSession = "none+bspwm";
+      
       displayManager.lightdm = {
         enable = true;
         greeters.slick.enable = true;
@@ -88,61 +88,64 @@ let user = "dustin";
         enable = true;
       };
 
-      # Better support for general peripherals
-      libinput.enable = true;
-
+      
       # Turn Caps Lock into Ctrl
       xkb = {
         layout = "us";
         options = "ctrl:nocaps";
       };
     };
+    
+    displayManager.defaultSession = "none+bspwm";
+    
+    # Better support for general peripherals
+     libinput.enable = true;
 
     # Enable CUPS to print documents
     printing = {
-      enable = true;
+      enable = false;
       drivers = [ pkgs.brlaser ]; # Brother printer driver
     };
 
-    syncthing = {
-      enable = true;
-      openDefaultPorts = true;
-      dataDir = "/home/${user}/.local/share/syncthing";
-      configDir = "/home/${user}/.config/syncthing";
-      user = "${user}";
-      group = "users";
-      guiAddress = "127.0.0.1:8384";
-      overrideFolders = true;
-      overrideDevices = true;
+    #syncthing = {
+    #   enable = true;
+    #   openDefaultPorts = true;
+    #   dataDir = "/home/${user}/.local/share/#syncthing";
+    #   configDir = "/home/${user}/.config/#syncthing";
+    #   user = "${user}";
+    #   group = "users";
+    #   guiAddress = "127.0.0.1:8384";
+    #   overrideFolders = false;
+    #   overrideDevices = true;
 
-      settings = {
-        devices = {
-          "Macbook Pro" = {
-            id = "P2FYLQW-PKDFJGZ-EUGI2T7-OW4AH4I-KI462HD-U2VL3X3-GN55PP2-VNRE5AH";
-            autoAcceptFolders = true;
-            allowedNetwork = "192.168.0.0/16";
-            addresses = [ "tcp://192.168.0.99:51820" ];
-          };
-          "Home Lab" = {
-            id = "WW5O366-THBBBA3-HKQAYCP-EWADS4I-4KDDC5Z-3JCO42M-RLBZ3DY-NM7PEQA";
-            allowedNetwork = "192.168.0.0/16";
-            autoAcceptFolders = true;
-            addresses = [ "tcp://192.168.0.103:51820" ];
-          };
-        };
+    #   settings = {
+    #     devices = {
+    #       "Macbook Pro" = {
+    #         id = "P2FYLQW-PKDFJGZ-EUGI2T7-OW4AH4I-KI462HD-U2VL3X3-GN55PP2-VNRE5AH";
+    #         autoAcceptFolders = true;
+    #         allowedNetwork = "192.168.0.0/16";
+    #         addresses = [ "tcp://192.168.0.99:51820" ];
+    #       };
+    #       "Home Lab" = {
+    #         id = "WW5O366-THBBBA3-HKQAYCP-EWADS4I-4KDDC5Z-3JCO42M-RLBZ3DY-NM7PEQA";
+    #         allowedNetwork = "192.168.0.0/16";
+    #         autoAcceptFolders = true;
+    #         addresses = [ "tcp://192.168.0.103:51820" ];
+    #       };
+    #     };
 
-        folders = {
-          "XDG Share" = {
-            id = "ukrub-quh7k";
-            path = "/home/${user}/.local/share";
-            devices = [ "Macbook Pro" "Home Lab" ];
-          };
-        };
+    #     folders = {
+    #       "XDG Share" = {
+    #         id = "ukrub-quh7k";
+    #         path = "/home/${user}/.local/share";
+    #         devices = [ "Macbook Pro" "Home Lab" ];
+    #       };
+    #     };
 
-        options.globalAnnounceEnabled = false; # Only sync on LAN
-      };
+    #     options.globalAnnounceEnabled = false; # Only sync on LAN
+    #   };
 
-    };
+    # };
 
     # Picom, my window compositor with fancy effects
     #
@@ -253,18 +256,16 @@ let user = "dustin";
   };
 
   # Enable sound
-  sound.enable = true;
+  # sound.enable = true; #deprecated
   hardware = {
-    pulseaudio.enable = true;
+    pulseaudio.enable = false;
 
     # Video support
     opengl = {
       enable = true;
-      driSupport32Bit = true;
-      driSupport = true;
     };
 
-    nvidia.modesetting.enable = true;
+    #nvidia.modesetting.enable = true;
 
     # Crypto wallet support
     ledger.enable = true;
