@@ -242,10 +242,10 @@ let user = "lessuseless";
     openssh.enable = true;
 
     # My editor runs as a daemon
-    emacs = {
-      enable = true;
-      package = pkgs.emacs-unstable;
-    };
+    #emacs = {
+    #  enable = true;
+    #  package = pkgs.emacs-unstable;
+    #};
 
     gvfs.enable = true; # Mount, trash, and other functionalities
     tumbler.enable = true; # Thumbnail support for images

@@ -19,7 +19,8 @@ let user = "%USER%";
       };
       efi.canTouchEfiVariables = true;
     };
-    initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
+    initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "thunderbolt" "usbhid" "usb_storage" "sd_mod" ];
+    supportedFilesystems = [ "btrfs" "ext2" "ext3" "ext4" "exfat" "f2fs" "fat8" "fat16" "fat32" "ntfs" "xfs" ];
     # Uncomment for AMD GPU
     # initrd.kernelModules = [ "amdgpu" ];
     kernelPackages = pkgs.linuxPackages_latest;
@@ -27,7 +28,7 @@ let user = "%USER%";
   };
 
   # Set your time zone.
-  time.timeZone = "America/New_York";
+  time.timeZone = "America/Mexico_City";
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
@@ -36,6 +37,7 @@ let user = "%USER%";
     hostName = "%HOST%"; # Define your hostname.
     useDHCP = false;
     interfaces."%INTERFACE%".useDHCP = true;
+    networkmanager.enable = true;
   };
 
   nix = {
@@ -263,6 +265,7 @@ let user = "%USER%";
       extraGroups = [
         "wheel" # Enable ‘sudo’ for the user.
         "docker"
+        "networkmanager"
       ];
       shell = pkgs.zsh;
       openssh.authorizedKeys.keys = keys;
