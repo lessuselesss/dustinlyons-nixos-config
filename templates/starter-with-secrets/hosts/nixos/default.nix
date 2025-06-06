@@ -24,7 +24,11 @@ let user = "%USER%";
     # Uncomment for AMD GPU
     # initrd.kernelModules = [ "amdgpu" ];
     kernelPackages = pkgs.linuxPackages_latest;
-    kernelModules = [ "uinput" ];
+    kernelModules = [ 
+      "uinput" 
+      "iwlwifi"
+      "iwlmvm"
+    ];
   };
 
   # Set your time zone.
@@ -251,6 +255,9 @@ let user = "%USER%";
 
     # Crypto wallet support
     ledger.enable = true;
+  
+    hardware.enableAllFirmware = true;
+    hardware.enableRedistributableFirmware = true;
   };
 
 
