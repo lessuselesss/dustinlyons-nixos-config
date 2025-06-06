@@ -257,8 +257,8 @@ user}/.local/share/src/nixos-config:/etc/nixos" ];
     # Crypto wallet support
     ledger.enable = true;
 
-    hardware.enableAllFirmware = true;
-    hardware.enableRedistributableFirmware = true;
+    enableAllFirmware = true;
+    enableRedistributableFirmware = true;
   };
 
 
