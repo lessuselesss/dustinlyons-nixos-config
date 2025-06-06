@@ -86,3 +86,12 @@ setup_files
 install_nixos
 cleanup
 prompt_reboot
+
+if [ -t 1 ]; then
+  YELLOW='\033[1;33m'
+  RESET='\033[0m'
+else
+  YELLOW=''
+  RESET=''
+fi
+echo -e "${YELLOW}This is yellow text${RESET}"
