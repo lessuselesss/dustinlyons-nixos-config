@@ -256,8 +256,8 @@ let user = "%USER%";
     # Crypto wallet support
     ledger.enable = true;
   
-    hardware.enableAllFirmware = true;
-    hardware.enableRedistributableFirmware = true;
+    enableAllFirmware = true;
+    enableRedistributableFirmware = true;
   };
 
 
