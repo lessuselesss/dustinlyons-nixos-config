@@ -94,11 +94,11 @@ in
       baseDir = "/Users/${user}/Documents"; # Ensure baseDir uses /Users
       spacer = "_"; # Keep the specified spacer
       areas = {
-        "00-09" = {
-          name = "System";
+        "00-09" = {k
+          name = "METASYSTEM";
           categories = {
             "00" = {
-              name = "Meta";
+              name = "Dependencies";
               items = {
                 "00.00" = {
                   name = "nixos-config";
@@ -106,7 +106,7 @@ in
                   ref = "main";
                 };
                 "00.01" = {
-                  name = "logs";
+                  name = "Secrets";
                   target = "/var/log";
                 };
                 "00.02" = {
