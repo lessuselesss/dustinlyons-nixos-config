@@ -19,7 +19,7 @@ let user = "lessuseless";
       };
       efi.canTouchEfiVariables = true;
     };
-    initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" "v4l2loopback" ];
+    initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "vmd" "usbhid" "usb_storage" "sd_mod" "v4l2loopback" ];
     kernelModules = [ "uinput" "v4l2loopback" ];
     extraModulePackages = [ pkgs.linuxPackages.v4l2loopback ];
   };
@@ -31,9 +31,11 @@ let user = "lessuseless";
   # Per-interface useDHCP will be mandatory in the future, so this generated config
   # replicates the default behaviour.
   networking = {
-    hostName = "felix"; # Define your hostname.
+    hostName = "tachi"; # Define your hostname.
     useDHCP = false;
-    interfaces.eno1.useDHCP = true;
+    interfaces.wlo1.useDHCP = true;
+    networkmanager.enable = true; 
+
   };
 
   # Turn on flag for proprietary software
