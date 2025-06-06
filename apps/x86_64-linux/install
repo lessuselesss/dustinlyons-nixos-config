@@ -11,13 +11,13 @@ check_installer() {
 }
 
 cleanup() {
-  rm -rf nixos-config-main.zip nixos-config-main nixos-config
+  rm -rf dustinlyons-nixos-config-main.zip dustinlyons-nixos-config-main nixos-config
 }
 
 download_config() {
-  curl -LJ0 https://github.com/lessuselesss/dustinlyons-nixos-config/archive/main.zip -o nixos-config-main.zip
-  unzip nixos-config-main.zip
-  mv nixos-config-main/templates/starter nixos-config
+  curl -LJ0 https://github.com/lessuselesss/dustinlyons-nixos-config/archive/main.zip -o dustin-nixos-config-main.zip
+  unzip dustinlyons-nixos-config-main.zip
+  mv dustinlyons-nixos-config-main/templates/starter nixos-config
   cd nixos-config
 }
 
