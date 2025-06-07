@@ -1,104 +1,73 @@
-{ pkgs, ... }:
-
-let
-  myPython = pkgs.python3.withPackages (ps: with ps; [
-    slpp
-    pip
-    rich
-    virtualenv
-    black
-  ]);
-in
+{ pkgs }:
 
 with pkgs; [
   # General packages for development and system management
-  act
+  atuin
   alacritty
   aspell
   aspellDicts.en
+  appimage-run
   bash-completion
   bat
   btop
+  cachix
   coreutils
-  difftastic
-  du-dust
-  gcc
-  git-filter-repo
+  distrobox
+  git-credential-manager
+  gh
   killall
   neofetch
   openssh
-  pandoc
   sqlite
   wget
   zip
-  uv
 
   # Encryption and security tools
-  _1password
   age
   age-plugin-yubikey
   gnupg
   libfido2
+  gopass 
+  git-credential-gopass
+  gopass-summon-provider
+  gopass-hibp
 
   # Cloud-related tools and SDKs
-  flyctl
-  google-cloud-sdk
-  go
-  gopls
-  ngrok
-  ssm-session-manager-plugin
-  terraform
-  terraform-ls
-  tflint
+  docker
+  docker-compose
 
   # Media-related packages
   emacs-all-the-icons-fonts
-  imagemagick
   dejavu_fonts
   ffmpeg
   fd
   font-awesome
-  glow
   hack-font
-  jpegoptim
-  meslo-lgs-nf
   noto-fonts
   noto-fonts-emoji
-  pngquant
-
-  # PHP
-  php82
-  php82Packages.composer
-  php82Packages.php-cs-fixer
-  php82Extensions.xdebug
-  php82Packages.deployer
-  phpunit
+  meslo-lgs-nf
 
   # Node.js development tools
-  fzf
-  nodePackages.live-server
-  nodePackages.nodemon
+  nodePackages.npm # globally install npm
   nodePackages.prettier
-  nodePackages.npm
   nodejs
-
-  # Source code management, Git, GitHub tools
-  gh
 
   # Text and terminal utilities
   htop
   hunspell
   iftop
   jetbrains-mono
-  jetbrains.phpstorm
   jq
   ripgrep
-  slack
   tree
   tmux
   unrar
   unzip
   zsh-powerlevel10k
+  code-cursor
+  vscode
 
-  myPython
+  # Python packages
+  python3
+  virtualenv
 ]

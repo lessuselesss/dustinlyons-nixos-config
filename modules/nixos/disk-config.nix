@@ -1,25 +1,26 @@
 _: {
-  # This is the disk layout for a dual-boot system with Windows 10.
+  # This formats the disk with the ext4 filesystem
+  # Other examples found here: https://github.com/nix-community/disko/tree/master/example
   disko.devices = {
     disk = {
-      nvme0n1 = {
+      vdb = {
         device = "/dev/nvme0n1";
         type = "disk";
         content = {
           type = "gpt";
           partitions = {
             ESP = {
-              type = "EF00";  # EFI partition type.
-              size = "500M";
+              type = "EF00";
+              size = "1000M";
               content = {
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/boot";
+                mountOptions = [ "umask=0077" ];
               };
             };
             root = {
-              start = "901G";  # Start immediately after Windows partition.
-              size = "100%";  # Takes the remaining half of the disk space.
+              size = "100%";
               content = {
                 type = "filesystem";
                 format = "ext4";

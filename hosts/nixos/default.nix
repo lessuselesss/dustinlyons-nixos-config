@@ -1,13 +1,11 @@
-{ config, inputs, lib, pkgs, agenix, ... }:
+{ config, inputs, pkgs, ... }:
 
 let user = "lessuseless";
     keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p" ]; in
 {
   imports = [
-    ../../modules/nixos/secrets.nix
     ../../modules/nixos/disk-config.nix
     ../../modules/shared
-    agenix.nixosModules.default
   ];
 
   # Use the systemd-boot EFI boot loader.
@@ -19,9 +17,16 @@ let user = "lessuseless";
       };
       efi.canTouchEfiVariables = true;
     };
-    initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "vmd" "usbhid" "usb_storage" "sd_mod" "v4l2loopback" ];
-    kernelModules = [ "uinput" "v4l2loopback" ];
-    extraModulePackages = [ pkgs.linuxPackages.v4l2loopback ];
+    initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "thunderbolt" "vmd" "usbhid" "usb_storage" "sd_mod" ];
+    supportedFilesystems = [ "btrfs" "ext2" "ext3" "ext4" "exfat" "f2fs" "vfat" "fat8" "fat16" "fat32" "ntfs" "xfs" ];
+    # Uncomment for AMD GPU
+    # initrd.kernelModules = [ "amdgpu" ];
+    kernelPackages = pkgs.linuxPackages_latest;
+    kernelModules = [ 
+      "uinput" 
+      "iwlwifi"
+      "iwlmvm"
+    ];
   };
 
   # Set your time zone.
@@ -33,20 +38,21 @@ let user = "lessuseless";
   networking = {
     hostName = "tachi"; # Define your hostname.
     useDHCP = false;
-    interfaces.wlo1.useDHCP = true;
-    networkmanager.enable = true; 
-
+    interfaces."wlo1".useDHCP = true;
+    networkmanager.enable = true;
   };
 
   # Turn on flag for proprietary software
   nix = {
-    nixPath = [ "nixos-config=/home/${user}/.local/share/src/nixos-config:/etc/nixos" ];
+    nixPath = [ "nixos-config=/home/${
+user}/.local/share/src/nixos-config:/etc/nixos" ];
     settings = {
       allowed-users = [ "${user}" ];
       trusted-users = [ "@admin" "${user}" ];
       substituters = [ "https://nix-community.cachix.org" "https://cache.nixos.org" ];
       trusted-public-keys = [ "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" ];
     };
+
     package = pkgs.nix;
     extraOptions = ''
       experimental-features = nix-command flakes
@@ -65,24 +71,29 @@ let user = "lessuseless";
   };
 
   services = {
+    displayManager.defaultSession = "none+bspwm";
     xserver = {
       enable = true;
 
-      #videoDrivers = [ "nvidia" ];
+      # Uncomment these for AMD or Nvidia GPU
+      # boot.initrd.kernelModules = [ "amdgpu" ];
+      # videoDrivers = [ "amdgpu" ];
+      # videoDrivers = [ "nvidia" ];
 
-      ## This helps fix tearing of windows for Nvidia cards
-      #screenSection = ''
-      #  Option       "metamodes" "nvidia-auto-select +0+0 {ForceFullCompositionPipeline=On}"
-      #  Option       "AllowIndirectGLXProtocol" "off"
-      #  Option       "TripleBuffer" "on"
-      #'';
+      # Uncomment for Nvidia GPU
+      # This helps fix tearing of windows for Nvidia cards
+      # screenSection = ''
+      #   Option       "metamodes" "nvidia-auto-select +0+0 {ForceFullCompositionPipeline=On}"
+      #   Option       "AllowIndirectGLXProtocol" "off"
+      #   Option       "TripleBuffer" "on"
+      # '';
 
-      # LightDM Display Manager
-      
-      displayManager.lightdm = {
-        enable = true;
-        greeters.slick.enable = true;
-        background = ../../modules/nixos/config/login-wallpaper.png;
+      displayManager = {
+        lightdm = {
+          enable = true;
+          greeters.slick.enable = true;
+          background = ../../modules/nixos/config/login-wallpaper.png;
+        };
       };
 
       # Tiling window manager
@@ -90,64 +101,40 @@ let user = "lessuseless";
         enable = true;
       };
 
-      
-      # Turn Caps Lock into Ctrl
       xkb = {
+        # Turn Caps Lock into Ctrl
         layout = "us";
         options = "ctrl:nocaps";
       };
     };
-    
-    displayManager.defaultSession = "none+bspwm";
-    
-    # Better support for general peripherals
-     libinput.enable = true;
 
-    # Enable CUPS to print documents
-    printing = {
-      enable = false;
-      drivers = [ pkgs.brlaser ]; # Brother printer driver
+    # Better support for general peripherals
+    libinput.enable = true;
+
+    # Let's be able to SSH into this machine
+    openssh.enable = true;
+
+    # Sync state between machines
+    syncthing = {
+      enable = true;
+      openDefaultPorts = true;
+      dataDir = "/home/${user}/.local/share/syncthing";
+      configDir = "/home/${user}/.config/syncthing";
+      user = "${user}";
+      group = "users";
+      guiAddress = "127.0.0.1:8384";
+      overrideFolders = true;
+      overrideDevices = true;
+
+      settings = {
+        devices = {};
+        options.globalAnnounceEnabled = false; # Only sync on LAN
+      };
     };
 
-    #syncthing = {
-    #   enable = true;
-    #   openDefaultPorts = true;
-    #   dataDir = "/home/${user}/.local/share/#syncthing";
-    #   configDir = "/home/${user}/.config/#syncthing";
-    #   user = "${user}";
-    #   group = "users";
-    #   guiAddress = "127.0.0.1:8384";
-    #   overrideFolders = false;
-    #   overrideDevices = true;
-
-    #   settings = {
-    #     devices = {
-    #       "Macbook Pro" = {
-    #         id = "P2FYLQW-PKDFJGZ-EUGI2T7-OW4AH4I-KI462HD-U2VL3X3-GN55PP2-VNRE5AH";
-    #         autoAcceptFolders = true;
-    #         allowedNetwork = "192.168.0.0/16";
-    #         addresses = [ "tcp://192.168.0.99:51820" ];
-    #       };
-    #       "Home Lab" = {
-    #         id = "WW5O366-THBBBA3-HKQAYCP-EWADS4I-4KDDC5Z-3JCO42M-RLBZ3DY-NM7PEQA";
-    #         allowedNetwork = "192.168.0.0/16";
-    #         autoAcceptFolders = true;
-    #         addresses = [ "tcp://192.168.0.103:51820" ];
-    #       };
-    #     };
-
-    #     folders = {
-    #       "XDG Share" = {
-    #         id = "ukrub-quh7k";
-    #         path = "/home/${user}/.local/share";
-    #         devices = [ "Macbook Pro" "Home Lab" ];
-    #       };
-    #     };
-
-    #     options.globalAnnounceEnabled = false; # Only sync on LAN
-    #   };
-
-    # };
+    # Enable CUPS to print documents
+    # printing.enable = true;
+    # printing.drivers = [ pkgs.brlaser ]; # Brother printer driver
 
     # Picom, my window compositor with fancy effects
     #
@@ -240,40 +227,42 @@ let user = "lessuseless";
       };
     };
 
-    # Let's be able to SSH into this machine
-    openssh.enable = true;
-
-    # My editor runs as a daemon
-    #emacs = {
-    #  enable = true;
-    #  package = pkgs.emacs-unstable;
-    #};
-
     gvfs.enable = true; # Mount, trash, and other functionalities
     tumbler.enable = true; # Thumbnail support for images
+
+    # Emacs runs as a daemon
+    emacs = {
+      enable = true;
+      package = pkgs.emacs-unstable;
+    };
   };
 
-  systemd.user.services.emacs = {
+  # When emacs builds from no cache, it exceeds the 90s timeout default
+  systemd.user.services = { 
+    emacs = {
     serviceConfig.TimeoutStartSec = "7min";
   };
+ }; 
+ # Enable sound
+  # sound.enable = true;
 
-  # Enable sound
-  # sound.enable = true; #deprecated
+  # Video support
   hardware = {
-    pulseaudio.enable = false;
+    graphics.enable = true;
+    # pulseaudio.enable = true;
+    # hardware.nvidia.modesetting.enable = true;
 
-    # Video support
-    opengl = {
-      enable = true;
-    };
-
-    #nvidia.modesetting.enable = true;
+    # Enable Xbox support
+    # hardware.xone.enable = true;
 
     # Crypto wallet support
     ledger.enable = true;
+
+    enableAllFirmware = true;
+    enableRedistributableFirmware = true;
   };
 
-  # Sync state between machines
+
   # Add docker daemon
   virtualisation = {
     docker = {
@@ -289,6 +278,7 @@ let user = "lessuseless";
       extraGroups = [
         "wheel" # Enable ‘sudo’ for the user.
         "docker"
+        "networkmanager"
       ];
       shell = pkgs.zsh;
       openssh.authorizedKeys.keys = keys;
@@ -324,10 +314,7 @@ let user = "lessuseless";
   ];
 
   environment.systemPackages = with pkgs; [
-    agenix.packages."${pkgs.system}".default # "x86_64-linux"
     gitAndTools.gitFull
-    linuxPackages.v4l2loopback
-    v4l-utils
     inetutils
   ];
 
