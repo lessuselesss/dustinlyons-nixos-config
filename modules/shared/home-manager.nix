@@ -4,6 +4,12 @@ let name = "Ashley Barr";
     user = "lessuseless";
     email = "lessuseless@duck.com"; in
 {
+  direnv = {
+    enable = true;
+    enableZshIntegration = true;
+    nix-direnv.enable = true;
+  };
+  
   # Shared shell configuration
   zsh = {
     enable = true;
