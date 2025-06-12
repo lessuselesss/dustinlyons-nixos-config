@@ -22,6 +22,9 @@ with pkgs; [
   wget
   zip
   
+  # Communication/im
+  telegram-desktop
+ 
   # Encryption and security tools
   age
   age-plugin-yubikey
@@ -61,15 +64,20 @@ with pkgs; [
   ripgrep
   tree
   tmux
+  typst
   unrar
   unzip
+  zip
   zsh-powerlevel10k
   code-cursor
   vscode
+  warp-terminal
 
   # Python packages
   python3
   virtualenv
+  uv
+  marimo
 
  # Peripherals
  bazecor
