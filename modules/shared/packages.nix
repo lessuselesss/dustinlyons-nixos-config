@@ -21,7 +21,7 @@ with pkgs; [
   sqlite
   wget
   zip
-
+  
   # Encryption and security tools
   age
   age-plugin-yubikey
@@ -70,4 +70,8 @@ with pkgs; [
   # Python packages
   python3
   virtualenv
+
+ # Peripherals
+ bazecor
+ 
 ]
