@@ -111,6 +111,9 @@ user}/.local/share/src/nixos-config:/etc/nixos" ];
     # Better support for general peripherals
     libinput.enable = true;
 
+    # Keyring 
+    gnome.gnome-keyring.enable = true;
+
     # Let's be able to SSH into this machine
     openssh.enable = true;
 
