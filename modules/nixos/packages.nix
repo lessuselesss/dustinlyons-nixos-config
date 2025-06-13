@@ -8,6 +8,15 @@ shared-packages ++ [
   yubikey-agent
   keepassxc
 
+  # Niri Dependencies
+  gnome-keyring
+  mako
+  xdg-desktop-portal-gtk
+  xdg-desktop-portal-gnome
+  fuzzel
+  kdePackages.polkit-kde-agent-1
+  xwayland-satellite
+
   # App and package management
   appimage-run
   gnumake
