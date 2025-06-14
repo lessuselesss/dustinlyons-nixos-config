@@ -64,7 +64,7 @@ in
 
   # Screen lock
   services = {
-    flatpak.enable = true;
+    flatpak.enable = false;
     screen-locker = {
       enable = false;
       inactiveInterval = 10;
