@@ -1,4 +1,4 @@
-{ config, pkgs, lib, mcp-servers-nix, ... }:
+{ config, pkgs, lib, inputs, system, ... }:
 
 let
   user = "lessuseless";
@@ -23,7 +23,8 @@ let
   polybar-bars = builtins.readFile ./config/polybar/bars.ini;
   polybar-colors = builtins.readFile ./config/polybar/colors.ini;
 
-  mcp-server-package = mcp-servers-nix.lib.mkConfig pkgs {
+  # Access mcp-servers-nix through the `inputs` argument.
+  mcp-server-package = inputs.mcp-servers-nix.lib.mkConfig pkgs {
     programs = {
       filesystem = {
         enable = true;
@@ -41,8 +42,7 @@ in
     username = "${user}";
     homeDirectory = "/home/${user}";
     
-    ## MODIFIED: Appended the new package to your existing package list ##
-    # This adds the mcp-server-package to the list of packages from ./packages.nix
+    # This line now works because `inputs` is correctly passed.
     packages = (pkgs.callPackage ./packages.nix {}) ++ [ mcp-server-package ] ++ [ inputs.claude-desktop.packages.${system}.claude-desktop-with-fhs ];
 
     file = shared-files // import ./files.nix { inherit user; };
