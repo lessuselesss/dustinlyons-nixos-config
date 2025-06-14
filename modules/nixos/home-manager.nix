@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, mcp-servers-nix, ... }:
 
 let
   user = "lessuseless";
@@ -23,13 +23,29 @@ let
   polybar-bars = builtins.readFile ./config/polybar/bars.ini;
   polybar-colors = builtins.readFile ./config/polybar/colors.ini;
 
+  ## ADDED: The package definition from your second flake's logic ##
+  mcp-server-package = mcp-servers-nix.lib.mkConfig pkgs {
+    programs = {
+      filesystem = {
+        enable = true;
+        # IMPORTANT: Update this to a real directory path on your system
+        args = [ "/path/to/allowed/directory" ];
+      };
+      fetch.enable = true;
+    };
+  };
+
 in
 {
   home = {
     enableNixpkgsReleaseCheck = false;
     username = "${user}";
     homeDirectory = "/home/${user}";
-    packages = pkgs.callPackage ./packages.nix {};
+
+    ## MODIFIED: Appended the new package to your existing package list ##
+    # This adds the mcp-server-package to the list of packages from ./packages.nix
+    packages = (pkgs.callPackage ./packages.nix {}) ++ [ mcp-server-package ];
+
     file = shared-files // import ./files.nix { inherit user; };
     stateVersion = "21.05";
   };
