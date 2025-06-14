@@ -127,32 +127,23 @@
             ./hosts/darwin
           ];
         });
-
-      nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system:
-        nixpkgs.lib.nixosSystem {
-          inherit system;
-          # This passes the entire `inputs` attrset and the `system` string to all modules.
-          specialArgs = { inherit inputs system; };
-          modules = [
-            nix-flatpak.nixosModules.nix-flatpak
-            disko.nixosModules.disko
-            home-manager.nixosModules.home-manager
-
-            # This inline module correctly imports your home-manager config.
-            # It receives all module arguments (as `args`) and passes them
-            # to the imported file, solving the scope issue.
-            (args@{ ... }: {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                users.${user} = import ./modules/nixos/home-manager.nix args;
-              };
-            })
-
-            # Make sure this path points to your actual host configuration.
-            # For example, it might be `./hosts/tachi/configuration.nix`.
-            ./hosts/nixos
-          ];
-        });
-    };
-}
+        
+        nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system:
+                nixpkgs.lib.nixosSystem {
+                  inherit system;
+                  specialArgs = inputs;
+                  modules = [
+                    disko.nixosModules.disko
+                    home-manager.nixosModules.home-manager {
+                      home-manager = {
+                        useGlobalPkgs = true;
+                        useUserPackages = true;
+                        users.${user} = import ./modules/nixos/home-manager.nix;
+                      };
+                    }
+                    ./hosts/nixos
+                  ];
+                }
+              );
+            };
+        }
