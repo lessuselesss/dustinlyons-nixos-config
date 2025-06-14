@@ -33,7 +33,7 @@
     };
   };
 
-  outputs = { self, darwin, nix-homebrew, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, disko } @inputs:
+  outputs = { self, darwin, nix-homebrew, mcp-servers-nix, homebrew-bundle, homebrew-core, homebrew-cask, home-manager, nixpkgs, disko } @inputs:
     let
       user = "lessuseless";
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
