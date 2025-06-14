@@ -23,13 +23,12 @@ let
   polybar-bars = builtins.readFile ./config/polybar/bars.ini;
   polybar-colors = builtins.readFile ./config/polybar/colors.ini;
 
-  ## ADDED: The package definition from your second flake's logic ##
   mcp-server-package = mcp-servers-nix.lib.mkConfig pkgs {
     programs = {
       filesystem = {
         enable = true;
         # IMPORTANT: Update this to a real directory path on your system
-        args = [ "/path/to/allowed/directory" ];
+        args = [ "/home/${user}/Documents" ];
       };
       fetch.enable = true;
     };
