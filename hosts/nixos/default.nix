@@ -340,6 +340,7 @@ user}/.local/share/src/nixos-config:/etc/nixos" ];
     systemPackages = with pkgs; [
       gitAndTools.gitFull
       inetutils
+  ];
 
     # accessibility services for 'hints'
     sessionVariables = {
