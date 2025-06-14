@@ -7,6 +7,7 @@ shared-packages ++ [
   # Security and authentication
   yubikey-agent
   keepassxc
+  ledger-agent
 
   # Niri Dependencies
   gnome-keyring
@@ -62,7 +63,8 @@ shared-packages ++ [
   pcmanfm # File browser
   sqlite
   xdg-utils
-
+  distrobox
+  
   # Other utilities
   yad # yad-calendar is used with polybar
   xdotool
