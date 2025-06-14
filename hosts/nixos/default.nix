@@ -342,7 +342,7 @@ in
     systemPackages = with pkgs; [
       gitAndTools.gitFull
       inetutils
-      inputs.claude-desktop.packages.${system}.claude-desktop-with-fhs$
+      inputs.claude-desktop.packages.${system}.claude-desktop-with-fhs
     ];
 
     # accessibility services for 'hints'
