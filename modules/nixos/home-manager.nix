@@ -40,10 +40,10 @@ in
     enableNixpkgsReleaseCheck = false;
     username = "${user}";
     homeDirectory = "/home/${user}";
-
+    
     ## MODIFIED: Appended the new package to your existing package list ##
     # This adds the mcp-server-package to the list of packages from ./packages.nix
-    packages = (pkgs.callPackage ./packages.nix {}) ++ [ mcp-server-package ];
+    packages = (pkgs.callPackage ./packages.nix {}) ++ [ mcp-server-package ] ++ [ inputs.claude-desktop.packages.${system}.claude-desktop-with-fhs ];
 
     file = shared-files // import ./files.nix { inherit user; };
     stateVersion = "21.05";
