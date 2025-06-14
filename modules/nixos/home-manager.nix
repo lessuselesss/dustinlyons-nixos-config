@@ -24,16 +24,16 @@ let
   polybar-colors = builtins.readFile ./config/polybar/colors.ini;
 
   # Access mcp-servers-nix through the `inputs` argument.
-  mcp-server-package = inputs.mcp-servers-nix.lib.mkConfig pkgs {
-    programs = {
-      filesystem = {
-        enable = true;
-        # IMPORTANT: Update this to a real directory path on your system
-        args = [ "/home/${user}/Documents" ];
-      };
-      fetch.enable = true;
-    };
-  };
+#  mcp-server-package = inputs.mcp-servers-nix.lib.mkConfig pkgs {
+#    programs = {
+#      filesystem = {
+#        enable = true;
+#        # IMPORTANT: Update this to a real directory path on your system
+#        args = [ "/home/${user}/Documents" ];
+#      };
+#      fetch.enable = true;
+#    };
+#  };
 
 in
 {
@@ -41,11 +41,8 @@ in
     enableNixpkgsReleaseCheck = false;
     username = "${user}";
     homeDirectory = "/home/${user}";
-    
-    # This line now works because `inputs` is correctly passed.
-    packages = (pkgs.callPackage ./packages.nix {}) ++ [ mcp-server-package ];
-
-    file = shared-files // import ./files.nix { inherit user; };
+    packages = pkgs.callPackage ./packages.nix {};
+    file = shared-files // import ./files.nix { inherit user pkgs; };
     stateVersion = "21.05";
   };
 
