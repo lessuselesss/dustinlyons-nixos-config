@@ -23,6 +23,8 @@ shared-packages ++ [
   gnumake
   cmake
   home-manager
+  go 
+  gopls
 
   # Media and design tools
   vlc
