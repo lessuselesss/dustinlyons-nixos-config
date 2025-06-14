@@ -1,7 +1,9 @@
 { config, inputs, pkgs, ... }:
 
-let user = "lessuseless";
-    keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p" ]; in
+let
+  user = "lessuseless";
+  keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p" ];
+in
 {
   imports = [
     ../../modules/nixos/disk-config.nix
@@ -22,8 +24,8 @@ let user = "lessuseless";
     # Uncomment for AMD GPU
     # initrd.kernelModules = [ "amdgpu" ];
     kernelPackages = pkgs.linuxPackages_latest;
-    kernelModules = [ 
-      "uinput" 
+    kernelModules = [
+      "uinput"
       "iwlwifi"
       "iwlmvm"
     ];
@@ -44,8 +46,7 @@ let user = "lessuseless";
 
   # Turn on flag for proprietary software
   nix = {
-    nixPath = [ "nixos-config=/home/${
-user}/.local/share/src/nixos-config:/etc/nixos" ];
+    nixPath = [ "nixos-config=/home/${user}/.local/share/src/nixos-config:/etc/nixos" ];
     settings = {
       allowed-users = [ "${user}" ];
       trusted-users = [ "@admin" "${user}" ];
@@ -61,13 +62,13 @@ user}/.local/share/src/nixos-config:/etc/nixos" ];
         "dustinlyons-nixos-config.cachix.org-1:G+6axanpp47yE5d06WvxpH52qicUc4ym34sMseJBl+E="
         "lessuseless-nixos-config.cachix.org-1:bTpIPie+wvr5stHDRTAicphiCUrwnUgY84q4cRKkjnw="
       ];
-  };
+    };
 
     package = pkgs.nix;
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
-   };
+  };
 
   # Manages keys and such
   programs = {
@@ -94,9 +95,9 @@ user}/.local/share/src/nixos-config:/etc/nixos" ];
       # Uncomment for Nvidia GPU
       # This helps fix tearing of windows for Nvidia cards
       # screenSection = ''
-      #   Option       "metamodes" "nvidia-auto-select +0+0 {ForceFullCompositionPipeline=On}"
-      #   Option       "AllowIndirectGLXProtocol" "off"
-      #   Option       "TripleBuffer" "on"
+      #  Option     "metamodes" "nvidia-auto-select +0+0 {ForceFullCompositionPipeline=On}"
+      #  Option     "AllowIndirectGLXProtocol" "off"
+      #  Option     "TripleBuffer" "on"
       # '';
 
       displayManager = {
@@ -154,19 +155,19 @@ user}/.local/share/src/nixos-config:/etc/nixos" ];
     #
     # Notes on writing exclude rules:
     #
-    #   class_g looks up index 1 in WM_CLASS value for an application
-    #   class_i looks up index 0
+    #  class_g looks up index 1 in WM_CLASS value for an application
+    #  class_i looks up index 0
     #
-    #   To find the value for a specific application, use `xprop` at the
-    #   terminal and then click on a window of the application in question
+    #  To find the value for a specific application, use `xprop` at the
+    #  terminal and then click on a window of the application in question
     #
 
     udev.extraRules = ''
-    # Dygma Raise Keyboard
-    SUBSYSTEMS=="usb", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="2201", GROUP="users", MODE="0666"
-    SUBSYSTEMS=="usb", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="2200", GROUP="users", MODE="0666"
-    # Dygma Bootloader
-    SUBSYSTEMS=="usb", ATTRS{idVendor}=="35EF", MODE="0666"
+      # Dygma Raise Keyboard
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="2201", GROUP="users", MODE="0666"
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="2200", GROUP="users", MODE="0666"
+      # Dygma Bootloader
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="35EF", MODE="0666"
     '';
 
     picom = {
@@ -261,12 +262,13 @@ user}/.local/share/src/nixos-config:/etc/nixos" ];
   };
 
   # When emacs builds from no cache, it exceeds the 90s timeout default
-  systemd.user.services = { 
+  systemd.user.services = {
     emacs = {
-    serviceConfig.TimeoutStartSec = "7min";
+      serviceConfig.TimeoutStartSec = "7min";
+    };
   };
- }; 
- # Enable sound
+
+  # Enable sound
   # sound.enable = true;
 
   # Video support
@@ -317,9 +319,9 @@ user}/.local/share/src/nixos-config:/etc/nixos" ];
     enable = true;
     extraRules = [{
       commands = [
-       {
-         command = "${pkgs.systemd}/bin/reboot";
-         options = [ "NOPASSWD" ];
+        {
+          command = "${pkgs.systemd}/bin/reboot";
+          options = [ "NOPASSWD" ];
         }
       ];
       groups = [ "wheel" ];
@@ -351,7 +353,7 @@ user}/.local/share/src/nixos-config:/etc/nixos" ];
       QT_ACCESSIBILITY = "1";
       QT_LINUX_ACCESSIBILITY_ALWAYS_ON = "1";
     };
-  
+  };
 
   system.stateVersion = "21.05"; # Don't change this
 
