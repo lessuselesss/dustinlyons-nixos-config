@@ -104,7 +104,7 @@
         let user = "lessuseless";
         in darwin.lib.darwinSystem {
           inherit system;
-          specialArgs = inputs;
+          specialArgs = { inherit inputs system; };
           modules = [
             home-manager.darwinModules.home-manager
             nix-homebrew.darwinModules.nix-homebrew
@@ -128,17 +128,25 @@
       nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system:
         nixpkgs.lib.nixosSystem {
           inherit system;
-          specialArgs = inputs;
+          # This passes the entire `inputs` attrset and the `system` string to all modules.
+          specialArgs = { inherit inputs system; };
           modules = [
             disko.nixosModules.disko
             home-manager.nixosModules.home-manager
-            {
+
+            # This inline module correctly imports your home-manager config.
+            # It receives all module arguments (as `args`) and passes them
+            # to the imported file, solving the scope issue.
+            (args@{ ... }: {
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
-                users.${user} = import ./modules/nixos/home-manager.nix;
+                users.${user} = import ./modules/nixos/home-manager.nix args;
               };
-            }
+            })
+
+            # Make sure this path points to your actual host configuration.
+            # For example, it might be `./hosts/tachi/configuration.nix`.
             ./hosts/nixos
           ];
         });
