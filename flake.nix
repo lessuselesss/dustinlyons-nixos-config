@@ -10,7 +10,10 @@
       url = "github:LnL7/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
+    nix-flatpak = {
+      url = "github:gmodena/nix-flatpak/";
+ 
+    };
     nix-homebrew = {
       url = "github:zhaofengli-wip/nix-homebrew";
     };
@@ -131,6 +134,7 @@
           # This passes the entire `inputs` attrset and the `system` string to all modules.
           specialArgs = { inherit inputs system; };
           modules = [
+            nix-flatpak.nixosModules.nix-flatpak
             disko.nixosModules.disko
             home-manager.nixosModules.home-manager
 
