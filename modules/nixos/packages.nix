@@ -17,7 +17,7 @@ shared-packages ++ [
   fuzzel
   kdePackages.polkit-kde-agent-1
   xwayland-satellite
-
+  inputs.claude-desktop.packages.${system}.claude-desktop-with-fhs
   # App and package management
   appimage-run
   gnumake
