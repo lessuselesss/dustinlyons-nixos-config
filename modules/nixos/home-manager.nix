@@ -45,7 +45,7 @@ in
     # This line now works because `inputs` is correctly passed.
     packages = (pkgs.callPackage ./packages.nix {}) ++ [ mcp-server-package ] 
 
-    file = shared-files // import ./files.nix { inherit user; };
+    home.file = shared-files // import ./files.nix { inherit user; };
     stateVersion = "21.05";
   };
 
