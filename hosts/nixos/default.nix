@@ -346,15 +346,15 @@ in
     ];
 
     # accessibility services for 'hints'
-    sessionVariables = {
-      ACCESSIBILITY_ENABLED = "1";
-      GTK_MODULES = "gail:atk-bridge";
-      OOO_FORCE_DESKTOP = "gnome";
-      GNOME_ACCESSIBILITY = "1";
-      QT_ACCESSIBILITY = "1";
-      QT_LINUX_ACCESSIBILITY_ALWAYS_ON = "1";
-    };
-  };
+   # sessionVariables = {
+   #   ACCESSIBILITY_ENABLED = "1";
+   #   GTK_MODULES = "gail:atk-bridge";
+   #   OOO_FORCE_DESKTOP = "gnome";
+   #   GNOME_ACCESSIBILITY = "1";
+   #   QT_ACCESSIBILITY = "1";
+   #   QT_LINUX_ACCESSIBILITY_ALWAYS_ON = "1";
+   #  };
+   };
 
   system.stateVersion = "21.05"; # Don't change this
 
