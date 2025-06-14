@@ -340,7 +340,7 @@ user}/.local/share/src/nixos-config:/etc/nixos" ];
     systemPackages = with pkgs; [
       gitAndTools.gitFull
       inetutils
-  ];
+    ];
 
     # accessibility services for 'hints'
     sessionVariables = {
@@ -351,7 +351,7 @@ user}/.local/share/src/nixos-config:/etc/nixos" ];
       QT_ACCESSIBILITY = "1";
       QT_LINUX_ACCESSIBILITY_ALWAYS_ON = "1";
     };
-  ];
+  
 
   system.stateVersion = "21.05"; # Don't change this
 
