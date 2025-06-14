@@ -43,7 +43,7 @@ in
     homeDirectory = "/home/${user}";
     
     # This line now works because `inputs` is correctly passed.
-    packages = (pkgs.callPackage ./packages.nix {}) ++ [ mcp-server-package ] ++ [ inputs.claude-desktop.packages.${system}.claude-desktop-with-fhs ];
+    packages = (pkgs.callPackage ./packages.nix {}) ++ [ mcp-server-package ] 
 
     file = shared-files // import ./files.nix { inherit user; };
     stateVersion = "21.05";
