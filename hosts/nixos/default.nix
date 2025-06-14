@@ -71,6 +71,7 @@ user}/.local/share/src/nixos-config:/etc/nixos" ];
   };
 
   services = {
+
     displayManager.defaultSession = "none+bspwm";
     xserver = {
       enable = true;
@@ -149,6 +150,15 @@ user}/.local/share/src/nixos-config:/etc/nixos" ];
     #   To find the value for a specific application, use `xprop` at the
     #   terminal and then click on a window of the application in question
     #
+
+    udev.extraRules = ''
+    # Dygma Raise Keyboard
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="2201", GROUP="users", MODE="0666"
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="2200", GROUP="users", MODE="0666"
+    # Dygma Bootloader
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="35EF", MODE="0666"
+    '';
+
     picom = {
       enable = true;
       settings = {
