@@ -6,7 +6,6 @@ with pkgs; [
   alacritty
   aspell
   aspellDicts.en
-  appimage-run
   bash-completion
   bat
   btop
@@ -24,6 +23,7 @@ with pkgs; [
   
   # Communication/im
   telegram-desktop
+  discord
  
   # Encryption and security tools
   age
@@ -34,6 +34,12 @@ with pkgs; [
   git-credential-gopass
   gopass-summon-provider
   gopass-hibp
+  
+  # IDEs
+  code-cursor
+  vscode
+  zed-editor
+  windsurf
 
   # Cloud-related tools and SDKs
   docker
@@ -69,8 +75,6 @@ with pkgs; [
   unzip
   zip
   zsh-powerlevel10k
-  code-cursor
-  vscode
   warp-terminal
 
   # Python packages
