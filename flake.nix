@@ -2,7 +2,8 @@
   description = "Starter Configuration for MacOS and NixOS";
 
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs";
+    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
+    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
     flake-utils.url = "github:numtide/flake-utils";
     home-manager.url = "github:nix-community/home-manager";
 
@@ -129,6 +130,7 @@
                   inherit system;
                   specialArgs = inputs;
                   modules = [
+                    determinate.nixosModules.default
                     disko.nixosModules.disko
                     home-manager.nixosModules.home-manager {
                       home-manager = {
