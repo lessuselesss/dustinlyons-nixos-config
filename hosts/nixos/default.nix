@@ -64,11 +64,13 @@ in
         "lessuseless-nixos-config.cachix.org-1:bTpIPie+wvr5stHDRTAicphiCUrwnUgY84q4cRKkjnw="
         "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM="
       ];
-    #  extra-substituters = [ "https://install.determinate.systems" ];
-    #  extra-trusted-public-keys = [ "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=" ];
+     extra-substituters = [ "https://install.determinate.systems" ];
+     extra-trusted-public-keys = [ "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=" ];
     };
+    
 
-    package = pkgs.nix;
+   # removing for determinate
+   # package = pkgs.nix;
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
