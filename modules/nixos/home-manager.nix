@@ -46,7 +46,34 @@ in
     stateVersion = "21.05";
   };
 
-  # Use a dark theme
+# EXPERIMENTAL
+##############################################
+#      # Assuming ledger-agent is available as a Nix package.
+#      # You might need to find its exact package name (e.g., pkgs.ledger-agent-app or similar).
+#      systemd.user.services.nanox-ledger-agent = {
+#        enable = true;
+#        description = "Nanox Ledger Agent for SSH";
+#        # Adjust these targets based on when ledger-agent needs to start.
+#        # Often, after network and basic user session is up.
+#        after = [ "network-online.target" "graphical-session-pre.target" ];
+#        wantedBy = [ "default.target" ];
+#        serviceConfig = {
+#          # ExecStart needs to point to the ledger-agent executable from its Nix package
+#          # and use the full path to the config file managed by home.file
+#          ExecStart = "${pkgs.ledger-agent}/bin/ledger-agent ${config.home.homeDirectory}/.ssh/nanox-keys.conf.pub -s";
+#          Restart = "on-failure"; # Restart if it crashes
+#          # If ledger-agent is meant to run in the background, you might need Type=forking or Type=simple
+#          # and potentially other options depending on its behavior.
+#          # Refer to `man systemd.service` for details.
+#          Type = "simple"; # Or "exec", "forking" depending on how ledger-agent runs
+#          StandardOutput = "journal";
+#          StandardError = "journal";
+#        };
+#      };
+##############################################
+
+
+# Use a dark theme
   gtk = {
     enable = true;
     iconTheme = {
