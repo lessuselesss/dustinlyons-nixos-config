@@ -17,6 +17,7 @@ shared-packages ++ [
   fuzzel
   kdePackages.polkit-kde-agent-1
   xwayland-satellite
+  # hints
   
   # App and package management
   appimage-run
@@ -71,7 +72,6 @@ shared-packages ++ [
   yad # yad-calendar is used with polybar
   xdotool
   google-chrome
-  chromedriver
 
   # PDF viewer
   zathura
