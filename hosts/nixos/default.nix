@@ -62,8 +62,8 @@ in
         "dustinlyons-nixos-config.cachix.org-1:G+6axanpp47yE5d06WvxpH52qicUc4ym34sMseJBl+E="
         "lessuseless-nixos-config.cachix.org-1:bTpIPie+wvr5stHDRTAicphiCUrwnUgY84q4cRKkjnw="
       ];
-      extra-substituters = [ "https://install.determinate.systems" ];
-      extra-trusted-public-keys = [ "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=" ];
+    #  extra-substituters = [ "https://install.determinate.systems" ];
+    #  extra-trusted-public-keys = [ "cache.flakehub.com-3:hJuILl5sVK4iKm86JzgdXW12Y2Hwd5G07qKtHTOcDCM=" ];
     };
 
     package = pkgs.nix;
