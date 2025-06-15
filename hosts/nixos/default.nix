@@ -2,7 +2,7 @@
 
 let
   user = "lessuseless";
-  keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p" ];
+  keys = [ "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBGN4rblIPQB1wt7hfb2d6GTtKl9dMKkZD2MvmsyIWfbHERWIQeUQZDmuhdVmp4NUZbvXvZf+paaROARdnmVxVl8= <ssh://lessuseless@tachi|nist256p1>" ];
 in
 {
   imports = [
