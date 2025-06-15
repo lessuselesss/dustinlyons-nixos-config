@@ -48,6 +48,12 @@ in
 
 # EXPERIMENTAL
 ##############################################
+#
+# # home.activation.linkNanoxKeys = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+#   ${pkgs.ledger-agent}/bin/ledger-agent "$HOME/.ssh/nanox-keys.conf.pub" -s -v
+# '';
+#
+##############################################
 #      # Assuming ledger-agent is available as a Nix package.
 #      # You might need to find its exact package name (e.g., pkgs.ledger-agent-app or similar).
 #      systemd.user.services.nanox-ledger-agent = {
