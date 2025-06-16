@@ -4,7 +4,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     nixjail = {
-      url = "git+file:/home/shiryel/nixos/nixjail?ref=master";
+      url = "github:lessuseless/nixjail";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
