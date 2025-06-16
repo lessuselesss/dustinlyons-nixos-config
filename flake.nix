@@ -51,7 +51,7 @@
     };
 
     mcp-servers-nix = {
-      url = "github:natsukium/mcp-servers-nix";
+      url = "github:lessuselesss/mcp-servers-nix?ref=taskmaster";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
