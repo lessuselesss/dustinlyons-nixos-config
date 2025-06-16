@@ -9,6 +9,7 @@ with pkgs; [
   bash-completion
   bat
   btop
+  boringtun
   cachix
   coreutils
   distrobox
