@@ -3,6 +3,7 @@
 with pkgs; [
   # General packages for development and system management
   atuin
+  aider-chat
   alacritty
   aspell
   aspellDicts.en
