@@ -135,7 +135,7 @@
                   inherit system;
                   specialArgs = inputs;
                   modules = [
-                    determinate.nixosModules.default
+                    #)determinate.nixosModules.default
                     disko.nixosModules.disko
                     home-manager.nixosModules.home-manager {
                       home-manager = {
