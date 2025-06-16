@@ -57,7 +57,7 @@
     };
   };
 
-  outputs = { self, darwin, disko, flake-utils, home-manager, homebrew-bundle, homebrew-cask, homebrew-core, mcp-servers-nix, nix-homebrew, nixpkgs, ... }@inputs:
+  outputs = { agenix, self, claude-desktop, darwin, disko, flake-utils, home-manager, homebrew-bundle, homebrew-cask, homebrew-core, mcp-servers-nix, nix-homebrew, nixjail, nixpkgs, ... }@inputs:
     let
       user = "lessuseless";
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
