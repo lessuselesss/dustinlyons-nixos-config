@@ -8,7 +8,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    agenix.url = "github:ryantm/agenix";
+    agenix = {
+      url = "github:ryantm/agenix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     home-manager.url = "github:nix-community/home-manager";
 
 
@@ -23,6 +27,7 @@
 
     nix-homebrew = {
       url = "github:zhaofengli-wip/nix-homebrew";
+      flake = false;
     };
 
     homebrew-bundle = {
@@ -140,9 +145,14 @@
                   inherit system;
                   specialArgs = inputs;
                   modules = [
-                    inputs.nixjail.nixosModules.nixjail
+
+                    agenix.nixosModules.default
+                    nixjail.nixosModules.nixjail
                     #determinate.nixosModules.default
                     disko.nixosModules.disko
+                    claude-desktop.nixosModules.default
+                    mcp-servers-nix.nixosModules.default
+
                     home-manager.nixosModules.home-manager {
                       home-manager = {
                         useGlobalPkgs = true;
