@@ -39,7 +39,7 @@ with pkgs; [
   # IDEs
   code-cursor
   vscode
-  vscodium
+  # vscodium
   zed-editor
   windsurf
 
