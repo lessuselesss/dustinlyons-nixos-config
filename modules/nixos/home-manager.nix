@@ -23,18 +23,6 @@ let
   polybar-bars = builtins.readFile ./config/polybar/bars.ini;
   polybar-colors = builtins.readFile ./config/polybar/colors.ini;
 
-  # Access mcp-servers-nix through the `inputs` argument.
-  mcp-server-package = inputs.mcp-servers-nix.lib.mkConfig pkgs {
-    programs = {
-      filesystem = {
-        enable = true;
-        # IMPORTANT: Update this to a real directory path on your system
-        args = [ "/home/${user}/Documents" ];
-       };
-       fetch.enable = true;
-     };
-   };
-
 in
 {
   home = {

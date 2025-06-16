@@ -139,30 +139,52 @@
             ./hosts/darwin
           ];
         });
-        
+
         nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system:
-                nixpkgs.lib.nixosSystem {
-                  inherit system;
-                  specialArgs = inputs;
-                  modules = [
-
-                    agenix.nixosModules.default
-                    nixjail.nixosModules.nixjail
-                    #determinate.nixosModules.default
-                    disko.nixosModules.disko
-                    claude-desktop.nixosModules.default
-                    mcp-servers-nix.nixosModules.default
-
-                    home-manager.nixosModules.home-manager {
-                      home-manager = {
-                        useGlobalPkgs = true;
-                        useUserPackages = true;
-                        users.${user} = import ./modules/nixos/home-manager.nix;
-                      };
-                    }
-                    ./hosts/nixos
-                  ];
-                }
-              );
+          let
+            pkgs = import nixpkgs {
+              inherit system;
+              config = {
+                allowUnfree = true;
+              };
+              # Correctly add the mcp-servers-nix overlay here
+              overlays = [ mcp-servers-nix.overlays.default ];
             };
-        }
+          in
+          nixpkgs.lib.nixosSystem {
+            inherit system;
+            specialArgs = inputs;
+            modules = [
+
+              agenix.nixosModules.default
+              nixjail.nixosModules.nixjail
+              #determinate.nixosModules.default
+              disko.nixosModules.disko
+              # Remove these lines if they are still present from previous attempts:
+              # claude-desktop.nixosModules.default
+              # mcp-servers-nix.nixosModules.default
+              # mcp-servers-nix.lib.mkConfig pkgs { ... }
+              # mcp-servers-nix.modules.filesystem
+              # mcp-servers-nix.modules.fetch
+
+              home-manager.nixosModules.home-manager {
+                home-manager = {
+                  useGlobalPkgs = true;
+                  useUserPackages = true;
+                  users.${user} = import ./modules/nixos/home-manager.nix;
+                };
+              }
+              ./hosts/nixos
+              { # This anonymous module correctly adds system packages
+                environment.systemPackages = with pkgs; [
+                  claude-desktop.packages.${system}.claude-desktop
+                  # Add the specific mcp-server packages you want here:
+                  mcp-server-fetch # Example: installs the mcp-server-fetch package
+                  mcp-server-filesystem # Example: installs the mcp-server-filesystem package
+                ];
+              }
+            ]; # Closing bracket for modules list
+          } # Closing brace for nixpkgs.lib.nixosSystem attribute set
+        ); # Closing parenthesis for nixpkgs.lib.genAttrs function call
+    }; # Closing brace for outputs attribute set
+} # Closing brace for the flake itself
