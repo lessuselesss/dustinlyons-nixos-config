@@ -2,15 +2,20 @@
   description = "Starter Configuration for MacOS and NixOS";
 
   inputs = {
-    determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
-    nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
-    flake-utils.url = "github:numtide/flake-utils";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    agenix.url = "github:ryantm/agenix";
     home-manager.url = "github:nix-community/home-manager";
+
+
+    # determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
+    # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
+    flake-utils.url = "github:numtide/flake-utils";
 
     darwin = {
       url = "github:LnL7/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
     nix-homebrew = {
       url = "github:zhaofengli-wip/nix-homebrew";
     };
@@ -47,7 +52,7 @@
     };
   };
 
-  outputs = { self, darwin, determinate, disko, flake-utils, home-manager, homebrew-bundle, homebrew-cask, homebrew-core, mcp-servers-nix, nix-homebrew, nixpkgs, ... }@inputs:
+  outputs = { self, darwin, disko, flake-utils, home-manager, homebrew-bundle, homebrew-cask, homebrew-core, mcp-servers-nix, nix-homebrew, nixpkgs, ... }@inputs:
     let
       user = "lessuseless";
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
