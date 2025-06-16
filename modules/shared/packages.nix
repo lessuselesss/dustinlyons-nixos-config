@@ -84,7 +84,8 @@ with pkgs; [
   python3
   virtualenv
   uv
-  marimo
+  marim
+  poetry
 
  # Peripherals
  bazecor
