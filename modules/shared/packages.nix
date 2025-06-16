@@ -38,7 +38,7 @@ with pkgs; [
   # IDEs
   code-cursor
   vscode
-  vscode-insiders
+  vscode-fhs
   zed-editor
   windsurf
 
