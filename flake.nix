@@ -3,6 +3,11 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    nixjail = {
+      url = "git+file:/home/shiryel/nixos/nixjail";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     agenix.url = "github:ryantm/agenix";
     home-manager.url = "github:nix-community/home-manager";
 
@@ -135,7 +140,8 @@
                   inherit system;
                   specialArgs = inputs;
                   modules = [
-                    #)determinate.nixosModules.default
+                    inputs.nixjail.nixosModules.nixjail
+                    #determinate.nixosModules.default
                     disko.nixosModules.disko
                     home-manager.nixosModules.home-manager {
                       home-manager = {
