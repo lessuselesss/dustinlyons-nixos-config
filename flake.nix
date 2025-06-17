@@ -50,7 +50,7 @@
 
     # Assuming 'claude-task-master' package and module are defined within this 'mcp-servers-nix' flake
     # on the 'taskmaster' branch, as per our previous discussion.
-    mcp-servers-nix = {
+    mcp-servers-nix.lib = {
       url = "github:lessuselesss/mcp-servers-nix?ref=taskmaster";
       inputs.nixpkgs.follows = "nixpkgs";
     };
