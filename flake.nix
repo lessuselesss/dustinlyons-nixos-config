@@ -25,7 +25,7 @@
     };
 
     nix-homebrew = {
-      url = "github:zhaofengli-wip/nix-homebrew";k
+      url = "github:zhaofengli-wip/nix-homebrew";
     };
 
     homebrew-bundle = {
