@@ -140,7 +140,7 @@
         }); # <--- **This is where the missing/misplaced parenthesis was.**
 
          nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system:
-          let
+
             pkgs = import nixpkgs {
               inherit system;
               config = {
