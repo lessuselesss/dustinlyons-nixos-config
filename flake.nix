@@ -116,30 +116,30 @@
       apps = nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
 
       darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (system:
-          darwin.lib.darwinSystem {
-          inherit system;
-          specialArgs = { inherit inputs system; };
-          modules = [
-            home-manager.darwinModules.home-manager
-            nix-homebrew.darwinModules.nix-homebrew
-            {
-              nix-homebrew = {
-                inherit user;
-                enable = true;
-                taps = {
-                  "homebrew/homebrew-core" = homebrew-core;
-                  "homebrew/homebrew-cask" = homebrew-cask;
-                  "homebrew/homebrew-bundle" = homebrew-bundle;
-                };
-                mutableTaps = false;
-                autoMigrate = true;
-              };
-            }
-            ./hosts/darwin
-          ];
-        });
+          darwin.lib.darwinSystem {
+          inherit system;
+          specialArgs = { inherit inputs system; };
+          modules = [
+            home-manager.darwinModules.home-manager
+            nix-homebrew.darwinModules.nix-homebrew
+            {
+              nix-homebrew = {
+                inherit user;
+                enable = true;
+                taps = {
+                  "homebrew/homebrew-core" = homebrew-core;
+                  "homebrew/homebrew-cask" = homebrew-cask;
+                  "homebrew/homebrew-bundle" = homebrew-bundle;
+                };
+                mutableTaps = false;
+                autoMigrate = true;
+              };
+            }
+            ./hosts/darwin
+          ];
+        }); # <--- **This is where the missing/misplaced parenthesis was.**
 
-         nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system: # Opening parenthesis for the function starts here
+         nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system:
           let
             pkgs = import nixpkgs {
               inherit system;
@@ -198,4 +198,4 @@
               }
             ];
           }
-        ); # This closing parenthesis was missing or misplaced, it closes the function passed to genAttrs.
+        );
