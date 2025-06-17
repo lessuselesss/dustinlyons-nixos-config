@@ -116,7 +116,7 @@
       apps = nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
 
       darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (system:
-        in darwin.lib.darwinSystem {
+          darwin.lib.darwinSystem {
           inherit system;
           specialArgs = { inherit inputs system; };
           modules = [
