@@ -63,19 +63,16 @@
   };
 
   outputs = { agenix, self, claude-desktop, darwin, disko, flake-utils, home-manager, homebrew-bundle, homebrew-cask, homebrew-core, mcp-servers-nix, nix-homebrew, nixjail, nixpkgs, ... }@inputs:
-    let
+   let
       user = "lessuseless";
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
       darwinSystems = [ "aarch64-darwin" "x86_64-darwin" ];
       forAllSystems = f: nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) f;
-
-      devShell = system:
-        let pkgs = nixpkgs.legacyPackages.${system};
-        in {
+      devShell = system: let pkgs = nixpkgs.legacyPackages.${system};
           default = with pkgs;
             mkShell {
-              nativeBuildInputs = [ bashInteractive git ];
-              shellHook = ''
+              nativeBuildInputs = [ bashInteractive git age age-plugin-yubikey ];
+              shellHook = with pkgs; ''
                 export EDITOR=vim
               '';
             };
@@ -99,7 +96,6 @@
         "check-keys" = mkApp "check-keys" system;
         "install" = mkApp "install" system;
       };
-
       mkDarwinApps = system: {
         "apply" = mkApp "apply" system;
         "build" = mkApp "build" system;
@@ -109,8 +105,8 @@
         "check-keys" = mkApp "check-keys" system;
         "rollback" = mkApp "rollback" system;
       };
-
-    in {
+    in 
+     {
       devShells = forAllSystems devShell;
 
       apps = nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
@@ -137,11 +133,10 @@
             }
             ./hosts/darwin
           ];
-        }); # <--- **This is where the missing/misplaced parenthesis was.**
-
+        });
          nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system:
 
-            pkgs = import nixpkgs {
+            pkgs = import nixpkgs {
               inherit system;
               config = {
                 allowUnfree = true;
@@ -153,6 +148,7 @@
             inherit system;
             specialArgs = inputs;
             modules = [
+
               agenix.nixosModules.default
               nixjail.nixosModules.nixjail
               disko.nixosModules.disko
@@ -177,9 +173,7 @@
                   openaiApiKey = "YOUR_OPENAI_KEY_HERE";
                   googleApiKey = "YOUR_GOOGLE_KEY_HERE";
                 };
-              }) # Closing brace for the anonymous module. This is an item in the 'modules' list.
-              # ENSURE there is no accidental extra 'imports = [...]' here.
-
+              })
               home-manager.nixosModules.home-manager {
                 home-manager = {
                   useGlobalPkgs = true;
