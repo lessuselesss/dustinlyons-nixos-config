@@ -48,9 +48,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Assuming 'claude-task-master' package and module are defined within this 'mcp-servers-nix' flake
-    # on the 'taskmaster' branch, as per our previous discussion.
-    mcp-servers-nix.lib = {
+    # Changed input name from mcp-servers-nix.lib to mcp-servers-nix
+    mcp-servers-nix = {
       url = "github:lessuselesss/mcp-servers-nix?ref=taskmaster";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -62,78 +61,98 @@
     };
   };
 
+  # Updated output signature to reflect the mcp-servers-nix input change
   outputs = { agenix, self, claude-desktop, darwin, disko, flake-utils, home-manager, homebrew-bundle, homebrew-cask, homebrew-core, mcp-servers-nix, nix-homebrew, nixjail, nixpkgs, ... }@inputs:
   let
-      user = "dustin";
-      linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
-      darwinSystems = [ "aarch64-darwin" "x86_64-darwin" ];
-      forAllSystems = f: nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) f;
-      devShell = system: let pkgs = nixpkgs.legacyPackages.${system}; in {
-        default = with pkgs; mkShell {
-          nativeBuildInputs = with pkgs; [ bashInteractive git age age-plugin-yubikey ];
-          shellHook = with pkgs; ''
-            export EDITOR=vim
-          '';
-        };
+    user = "dustin";
+    linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
+    darwinSystems = [ "aarch64-darwin" "x86_64-darwin" ];
+    forAllSystems = f: nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) f;
+    devShell = system: let pkgs = nixpkgs.legacyPackages.${system}; in {
+      default = with pkgs; mkShell {
+        nativeBuildInputs = with pkgs; [ bashInteractive git age age-plugin-yubikey ];
+        shellHook = with pkgs; ''
+          export EDITOR=vim
+        '';
       };
-      mkApp = scriptName: system: {
-        type = "app";
-        program = "${(nixpkgs.legacyPackages.${system}.writeScriptBin scriptName ''
-          #!/usr/bin/env bash
-          PATH=${nixpkgs.legacyPackages.${system}.git}/bin:$PATH
-          echo "Running ${scriptName} for ${system}"
-          exec ${self}/apps/${system}/${scriptName}
-        '')}/bin/${scriptName}";
-      };
+    };
+    # mkApp function assumes scripts exist at specific paths or are packaged derivations.
+    # This example assumes the scripts 'apply', 'build-switch', etc., exist as files
+    # in a directory structure like `./apps/${system}/${scriptName}.sh` and are read into the derivation.
+    # You might need to adjust the path based on where your actual scripts live.
+    mkApp = scriptName: system: {
+      type = "app";
+      program = "${(nixpkgs.legacyPackages.${system}.writeScriptBin scriptName ''
+        #!/usr/bin/env bash
+        # Ensure these scripts exist in your flake at the path referenced by self
+        # For demonstration, let's assume they are simple shell scripts within the flake's `apps` directory
+        # If these are actual Nix derivations/packages, you'd reference them differently.
+        # This part requires you to provide the actual script content or a path to it.
+        # For now, keeping the original logic, assuming you have files like apps/x86_64-linux/apply
+        PATH=${nixpkgs.legacyPackages.${system}.git}/bin:$PATH # Ensure git is in PATH if needed by the script
+        echo "Running ${scriptName} for ${system}"
+        exec ${self}/apps/${system}/${scriptName}
+      '')}/bin/${scriptName}";
+    };
 
-      mkLinuxApps = system: {
-        "apply" = mkApp "apply" system;
-        "build-switch" = mkApp "build-switch" system;
-        "copy-keys" = mkApp "copy-keys" system;
-        "create-keys" = mkApp "create-keys" system;
-        "check-keys" = mkApp "check-keys" system;
-        "install" = mkApp "install" system;
-      };
-      mkDarwinApps = system: {
-        "apply" = mkApp "apply" system;
-        "build" = mkApp "build" system;
-        "build-switch" = mkApp "build-switch" system;
-        "copy-keys" = mkApp "copy-keys" system;
-        "create-keys" = mkApp "create-keys" system;
-        "check-keys" = mkApp "check-keys" system;
-        "rollback" = mkApp "rollback" system;
-      };
-    in 
-     {
+    mkLinuxApps = system: {
+      "apply" = mkApp "apply" system;
+      "build-switch" = mkApp "build-switch" system;
+      "copy-keys" = mkApp "copy-keys" system;
+      "create-keys" = mkApp "create-keys" system;
+      "check-keys" = mkApp "check-keys" system;
+      "install" = mkApp "install" system;
+    };
+    mkDarwinApps = system: {
+      "apply" = mkApp "apply" system;
+      "build" = mkApp "build" system;
+      "build-switch" = mkApp "build-switch" system;
+      "copy-keys" = mkApp "copy-keys" system;
+      "create-keys" = mkApp "create-keys" system;
+      "check-keys" = mkApp "check-keys" system;
+      "rollback" = mkApp "rollback" system;
+    };
+  in
+    {
       devShells = forAllSystems devShell;
 
       apps = nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
 
       darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (system:
-          darwin.lib.darwinSystem {
-          inherit system;
-          specialArgs = { inherit inputs system; };
-          modules = [
-            home-manager.darwinModules.home-manager
-            nix-homebrew.darwinModules.nix-homebrew
-            {
-              nix-homebrew = {
-                inherit user;
-                enable = true;
-                taps = {
-                  "homebrew/homebrew-core" = homebrew-core;
-                  "homebrew/homebrew-cask" = homebrew-cask;
-                  "homebrew/homebrew-bundle" = homebrew-bundle;
-                };
-                mutableTaps = false;
-                autoMigrate = true;
-              };
-            }
-            ./hosts/darwin
-          ];
-        });
-        nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system:
+          darwin.lib.darwinSystem {
+          inherit system;
+          specialArgs = { inherit inputs system; };
+          modules = [
+            home-manager.darwinModules.home-manager
+            # Added home-manager configuration for Darwin
+            {
+              home-manager = {
+                useGlobalPkgs = true;
+                useUserPackages = true;
+                # Assuming you'll create a dedicated home-manager config for Darwin
+                users.${user} = import ./modules/darwin/home-manager.nix;
+              };
+            }
+            nix-homebrew.darwinModules.nix-homebrew
+            {
+              nix-homebrew = {
+                inherit user;
+                enable = true;
+                taps = {
+                  "homebrew/homebrew-core" = homebrew-core;
+                  "homebrew/homebrew-cask" = homebrew-cask;
+                  "homebrew/homebrew-bundle" = homebrew-bundle;
+                };
+                mutableTaps = false;
+                autoMigrate = true;
+              };
+            }
+            ./hosts/darwin
+          ];
+        });
+        nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system:
   let
+    # Streamlined pkgs definition to be used throughout this nixosConfiguration
     pkgs = import nixpkgs {
       inherit system;
       config = {
@@ -144,7 +163,8 @@
   in
   nixpkgs.lib.nixosSystem {
     inherit system;
-    specialArgs = inputs;
+    # Passed pkgs in specialArgs for easier access within modules
+    specialArgs = inputs // { inherit pkgs; };
     modules = [
 
       agenix.nixosModules.default
@@ -152,7 +172,7 @@
       disko.nixosModules.disko
 
       # THIS IS WHERE THAT ANONYMOUS MODULE GOES:
-      ({ config, ... }: {
+      ({ config, lib, pkgs, ... }: { # Added pkgs to module arguments
         imports = [
           mcp-servers-nix.lib.filesystem
           mcp-servers-nix.lib.fetch
@@ -166,6 +186,11 @@
         programs.fetch.enable = true;
         programs.claude-task-master = {
           enable = true;
+          # IMPORTANT: Replace these with actual secrets managed by agenix!
+          # Example using agenix (assuming secrets are defined via agenix module)
+          # anthropicApiKey = lib.mkIf config.age.secrets.anthropicApiKey.enable config.age.secrets.anthropicApiKey.path;
+          # Or, if using environment variables:
+          # anthropicApiKey = builtins.getEnv "ANTHROPIC_API_KEY";
           anthropicApiKey = "YOUR_ANTHROPIC_API_KEY_HERE";
           perplexityApiKey = "YOUR_PERPLEXITY_API_KEY_HERE";
           openaiApiKey = "YOUR_OPENAI_KEY_HERE";
@@ -177,11 +202,11 @@
           useGlobalPkgs = true;
           useUserPackages = true;
           users.${user} = import ./modules/nixos/home-manager.nix;
-        };
+        };l
       }
       ./hosts/nixos
       {
-        environment.systemPackages = with pkgs; [
+        environment.systemPackages = with pkgs; [ # Using the 'pkgs' defined in the 'let' block
           claude-desktop.packages.${system}.claude-desktop
           mcp-server-fetch
           mcp-server-filesystem
