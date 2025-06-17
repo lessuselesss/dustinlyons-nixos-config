@@ -164,11 +164,11 @@
               ({ config, ... }: {
                 imports = [
                   # Import the specific MCP server modules you want to use
-                  mcp-servers-nix.nixosModules.filesystem
-                  mcp-servers-nix.nixosModules.fetch
-                  mcp-servers-nix.nixosModules.claude-task-master # Import the new claude-task-master module
+                 imports = [
+                   mcp-servers-nix.lib.filesystem
+                   mcp-servers-nix.lib.fetch
+                   mcp-servers-nix.lib.claude-task-master
                 ];
-
                 # This section generates the MCP configuration file based on enabled programs
                 # and their settings, using the mkConfig function from mcp-servers-nix.
                 # The output of mkConfig is typically not directly consumed by nixosSystem,
