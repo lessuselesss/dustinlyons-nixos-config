@@ -25,8 +25,7 @@
     };
 
     nix-homebrew = {
-      url = "github:zhaofengli-wip/nix-homebrew";
-      flake = false;
+      url = "github:zhaofengli-wip/nix-homebrew";k
     };
 
     homebrew-bundle = {
@@ -117,7 +116,6 @@
       apps = nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
 
       darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (system:
-        let user = "lessuseless";
         in darwin.lib.darwinSystem {
           inherit system;
           specialArgs = { inherit inputs system; };
