@@ -231,10 +231,10 @@
                 environment.systemPackages = with pkgs; [
                   claude-desktop.packages.${system}.claude-desktop
                   # Add the specific mcp-server packages you want here:
-                  mcp-server-fetch
-                  mcp-server-filesystem
-                  # Install the claude-task-master package
-                  claude-task-master
+                  mcp-server-nix.lib.fetch
+                  mcp-server-nix.lib.filesystem
+                  # Install the claude-task-master 
+                  mcp-server-nix.lib.claude-task-master
                 ];
               }
             ];
