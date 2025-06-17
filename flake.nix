@@ -15,7 +15,6 @@
 
     home-manager.url = "github:nix-community/home-manager";
 
-
     # determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
     # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
     flake-utils.url = "github:numtide/flake-utils";
@@ -50,6 +49,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Assuming 'claude-task-master' package and module are defined within this 'mcp-servers-nix' flake
+    # on the 'taskmaster' branch, as per our previous discussion.
     mcp-servers-nix = {
       url = "github:lessuselesss/mcp-servers-nix?ref=taskmaster";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -147,7 +148,7 @@
               config = {
                 allowUnfree = true;
               };
-              # Correctly add the mcp-servers-nix overlay here
+              # Correctly add the mcp-servers-nix overlay here to expose mcp-server-* packages
               overlays = [ mcp-servers-nix.overlays.default ];
             };
           in
@@ -155,18 +156,71 @@
             inherit system;
             specialArgs = inputs;
             modules = [
-
               agenix.nixosModules.default
               nixjail.nixosModules.nixjail
-              #determinate.nixosModules.default
               disko.nixosModules.disko
-              # Remove these lines if they are still present from previous attempts:
-              # claude-desktop.nixosModules.default
-              # mcp-servers-nix.nixosModules.default
-              # mcp-servers-nix.lib.mkConfig pkgs { ... }
-              # mcp-servers-nix.modules.filesystem
-              # mcp-servers-nix.modules.fetch
 
+              # This anonymous module includes the MCP servers configuration
+              # and enables specific programs, including claude-task-master.
+              # It also imports the specific modules for these programs.
+              ({ config, ... }: {
+                imports = [
+                  # Import the specific MCP server modules you want to use
+                  mcp-servers-nix.modules.filesystem
+                  mcp-servers-nix.modules.fetch
+                  mcp-servers-nix.modules.claude-task-master # Import the new claude-task-master module
+                ];
+
+                # This section generates the MCP configuration file based on enabled programs
+                # and their settings, using the mkConfig function from mcp-servers-nix.
+                # The output of mkConfig is typically not directly consumed by nixosSystem,
+                # but rather determines the content of the generated MCP configuration file.
+                # You might need to add a service to run this configuration,
+                # or ensure your MCP client points to the generated file.
+                # For example, to generate a config file:
+                # let
+                #   mcpConfig = mcp-servers-nix.lib.mkConfig pkgs {
+                #     programs = {
+                #       filesystem = {
+                #         enable = true;
+                #         args = [ "/path/to/allowed/directory" ];
+                #       };
+                #       fetch.enable = true;
+                #       claude-task-master = {
+                #         enable = true;
+                #         anthropicApiKey = "YOUR_ANTHROPIC_API_KEY_HERE"; # REPLACE WITH YOUR ACTUAL KEY
+                #         perplexityApiKey = "YOUR_PERPLEXITY_API_KEY_HERE"; # REPLACE WITH YOUR ACTUAL KEY
+                #         openaiApiKey = "YOUR_OPENAI_KEY_HERE"; # REPLACE WITH YOUR ACTUAL KEY
+                #         googleApiKey = "YOUR_GOOGLE_KEY_HERE"; # REPLACE WITH YOUR ACTUAL KEY
+                #         # Ensure your mcp-servers-nix/modules/claude-task-master.nix
+                #         # is set up to read these options and pass them as environment variables.
+                #       };
+                #     };
+                #   };
+                # in
+                # {
+                #   # Example: Place the generated config file in a known location
+                #   # environment.etc."claude_desktop_config.json".source = mcpConfig;
+                # }
+                # The actual mechanism to run the generated configuration depends on your MCP setup.
+                # The `programs` attributes below are picked up by the `mcp-servers-nix.lib.mkConfig` function
+                # through the imported modules.
+
+                programs.filesystem = {
+                  enable = true;
+                  args = [ "/path/to/allowed/directory" ];
+                };
+                programs.fetch.enable = true;
+                programs.claude-task-master = {
+                  enable = true;
+                  anthropicApiKey = "YOUR_ANTHROPIC_API_KEY_HERE"; # IMPORTANT: Replace with your actual key
+                  perplexityApiKey = "YOUR_PERPLEXITY_API_KEY_HERE"; # IMPORTANT: Replace with your actual key
+                  openaiApiKey = "YOUR_OPENAI_KEY_HERE"; # IMPORTANT: Replace with your actual key
+                  googleApiKey = "YOUR_GOOGLE_KEY_HERE"; # IMPORTANT: Replace with your actual key
+                  # Remember to handle these securely, e.g., using `envFile` or `passwordCommand`
+                  # as described in your mcp-servers-nix README.md.
+                };
+              }) # Closing brace for the anonymous module
               home-manager.nixosModules.home-manager {
                 home-manager = {
                   useGlobalPkgs = true;
@@ -179,12 +233,14 @@
                 environment.systemPackages = with pkgs; [
                   claude-desktop.packages.${system}.claude-desktop
                   # Add the specific mcp-server packages you want here:
-                  mcp-server-fetch # Example: installs the mcp-server-fetch package
-                  mcp-server-filesystem # Example: installs the mcp-server-filesystem package
+                  mcp-server-fetch
+                  mcp-server-filesystem
+                  # Install the claude-task-master package
+                  claude-task-master
                 ];
               }
-            ]; # Closing bracket for modules list
-          } # Closing brace for nixpkgs.lib.nixosSystem attribute set
-        ); # Closing parenthesis for nixpkgs.lib.genAttrs function call
-    }; # Closing brace for outputs attribute set
-} # Closing brace for the flake itself
+            ];
+          } 
+        ); 
+    }; 
+} 
