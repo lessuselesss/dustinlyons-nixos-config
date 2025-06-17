@@ -9,6 +9,37 @@ in
     ../../modules/nixos/disk-config.nix
     ../../modules/shared
   ];
+  # --- Filesystem Declarations ---
+
+  # 1. Your EFI System Partition (for booting NixOS)
+  # This partition stores the bootloader and kernel for UEFI systems.
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/1A83-822B";
+    fsType = "vfat";
+    options = [ "defaults" "umask=0077" "noatime" ]; # umask=0077 sets permissions to rwx------ for root only
+  };
+
+  # 2. Your NixOS Root Filesystem
+  # This is where your entire NixOS system (excluding /boot) resides.
+  fileSystems."/" = {
+    device = "/dev/disk/by-uuid/7f558eda-1f44-4032-9252-b366000ea2af";
+    fsType = "ext4";
+    options = [ "defaults" "noatime" ];
+    # Common options include "defaults", "noatime" for performance.
+    # If this is your main root, 'neededForBoot' is implied.
+  };
+
+  # --- Swap Space (Optional, if you have a swap partition) ---
+  # You didn't show a dedicated swap partition in your blkid output.
+  # If you had one (e.g., UUID="some-swap-uuid", TYPE="swap"), you'd declare it like this:
+  #
+  # swapDevices = [
+  #  { device = "/dev/disk/by-uuid/YOUR_SWAP_UUID_HERE"; }
+  # ];
+  
+  swapDevices = [
+  { device = "/swapfile"; size = 4096; } # For a 4GB swap file
+  ];
 
   # Use the systemd-boot EFI boot loader.
   boot = {
