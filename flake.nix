@@ -139,106 +139,63 @@
           ];
         });
 
-        nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system:
-          let
-            pkgs = import nixpkgs {
-              inherit system;
-              config = {
-                allowUnfree = true;
-              };
-              # Correctly add the mcp-servers-nix overlay here to expose mcp-server-* packages
-              overlays = [ mcp-servers-nix.overlays.default ];
-            };
-          in
-          nixpkgs.lib.nixosSystem {
-            inherit system;
-            specialArgs = inputs;
-            modules = [
-              agenix.nixosModules.default
-              nixjail.nixosModules.nixjail
-              disko.nixosModules.disko
+         nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system:
+          let
+            pkgs = import nixpkgs {
+              inherit system;
+              config = {
+                allowUnfree = true;
+              };
+              overlays = [ mcp-servers-nix.overlays.default ];
+            };
+          in
+          nixpkgs.lib.nixosSystem {
+            inherit system;
+            specialArgs = inputs;
+            modules = [
+              agenix.nixosModules.default
+              nixjail.nixosModules.nixjail
+              disko.nixosModules.disko
 
-              # This anonymous module includes the MCP servers configuration
-              # and enables specific programs, including claude-task-master.
-              # It also imports the specific modules for these programs.
-              ({ config, ... }: {
-                imports = [
-                  # Import the specific MCP server modules you want to use
-                 imports = [
-                   mcp-servers-nix.lib.filesystem
-                   mcp-servers-nix.lib.fetch
-                   mcp-servers-nix.lib.claude-task-master
-                ];
-                # This section generates the MCP configuration file based on enabled programs
-                # and their settings, using the mkConfig function from mcp-servers-nix.
-                # The output of mkConfig is typically not directly consumed by nixosSystem,
-                # but rather determines the content of the generated MCP configuration file.
-                # You might need to add a service to run this configuration,
-                # or ensure your MCP client points to the generated file.
-                # For example, to generate a config file:
-                # let
-                #   mcpConfig = mcp-servers-nix.lib.mkConfig pkgs {
-                #     programs = {
-                #       filesystem = {
-                #         enable = true;
-                #         args = [ "/path/to/allowed/directory" ];
-                #       };
-                #       fetch.enable = true;
-                #       claude-task-master = {
-                #         enable = true;
-                #         anthropicApiKey = "YOUR_ANTHROPIC_API_KEY_HERE"; # REPLACE WITH YOUR ACTUAL KEY
-                #         perplexityApiKey = "YOUR_PERPLEXITY_API_KEY_HERE"; # REPLACE WITH YOUR ACTUAL KEY
-                #         openaiApiKey = "YOUR_OPENAI_KEY_HERE"; # REPLACE WITH YOUR ACTUAL KEY
-                #         googleApiKey = "YOUR_GOOGLE_KEY_HERE"; # REPLACE WITH YOUR ACTUAL KEY
-                #         # Ensure your mcp-servers-nix/modules/claude-task-master.nix
-                #         # is set up to read these options and pass them as environment variables.
-                #       };
-                #     };
-                #   };
-                # in
-                # {
-                #   # Example: Place the generated config file in a known location
-                #   # environment.etc."claude_desktop_config.json".source = mcpConfig;
-                # }
-                # The actual mechanism to run the generated configuration depends on your MCP setup.
-                # The `programs` attributes below are picked up by the `mcp-servers-nix.lib.mkConfig` function
-                # through the imported modules.
+              # THIS IS WHERE THAT ANONYMOUS MODULE GOES:
+              ({ config, ... }: {
+                imports = [
+                  mcp-servers-nix.lib.filesystem
+                  mcp-servers-nix.lib.fetch
+                  mcp-servers-nix.lib.claude-task-master
+                ];
 
-                programs.filesystem = {
-                  enable = true;
-                  args = [ "/path/to/allowed/directory" ];
-                };
-                programs.fetch.enable = true;
-                programs.claude-task-master = {
-                  enable = true;
-                  anthropicApiKey = "YOUR_ANTHROPIC_API_KEY_HERE"; # IMPORTANT: Replace with your actual key
-                  perplexityApiKey = "YOUR_PERPLEXITY_API_KEY_HERE"; # IMPORTANT: Replace with your actual key
-                  openaiApiKey = "YOUR_OPENAI_KEY_HERE"; # IMPORTANT: Replace with your actual key
-                  googleApiKey = "YOUR_GOOGLE_KEY_HERE"; # IMPORTANT: Replace with your actual key
-                  # Remember to handle these securely, e.g., using `envFile` or `passwordCommand`
-                  # as described in your mcp-servers-nix README.md.
-                };
-              }) # Closing brace for the anonymous module
-              home-manager.nixosModules.home-manager {
-                home-manager = {
-                  useGlobalPkgs = true;
-                  useUserPackages = true;
-                  users.${user} = import ./modules/nixos/home-manager.nix;
-                };
-              }
-              ./hosts/nixos
-              { # This anonymous module correctly adds system packages
-                environment.systemPackages = with pkgs; [
-                  claude-desktop.packages.${system}.claude-desktop
-                  # Add the specific mcp-server packages you want here:
-                  mcp-server-nix.lib.fetch
-                  mcp-server-nix.lib.filesystem
-                  # Install the claude-task-master 
-                  mcp-server-nix.lib.claude-task-master
-                ];
-              }
-            ];
-          } 
-        ); 
-    }; 
-} 
+                programs.filesystem = {
+                  enable = true;
+                  args = [ "/path/to/allowed/directory" ];
+                };
+                programs.fetch.enable = true;
+                programs.claude-task-master = {
+                  enable = true;
+                  anthropicApiKey = "YOUR_ANTHROPIC_API_KEY_HERE";
+                  perplexityApiKey = "YOUR_PERPLEXITY_API_KEY_HERE";
+                  openaiApiKey = "YOUR_OPENAI_KEY_HERE";
+                  googleApiKey = "YOUR_GOOGLE_KEY_HERE";
+                };
+              }) # Closing brace for the anonymous module. This is an item in the 'modules' list.
+              # ENSURE there is no accidental extra 'imports = [...]' here.
+
+              home-manager.nixosModules.home-manager {
+                home-manager = {
+                  useGlobalPkgs = true;
+                  useUserPackages = true;
+                  users.${user} = import ./modules/nixos/home-manager.nix;
+                };
+              }
+              ./hosts/nixos
+              {
+                environment.systemPackages = with pkgs; [
+                  claude-desktop.packages.${system}.claude-desktop
+                  mcp-server-fetch
+                  mcp-server-filesystem
+                  claude-task-master
+                ];
+              }
+            ];
+          }
+        );
