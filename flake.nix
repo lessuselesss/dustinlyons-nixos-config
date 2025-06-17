@@ -63,21 +63,19 @@
   };
 
   outputs = { agenix, self, claude-desktop, darwin, disko, flake-utils, home-manager, homebrew-bundle, homebrew-cask, homebrew-core, mcp-servers-nix, nix-homebrew, nixjail, nixpkgs, ... }@inputs:
-   let
-      user = "lessuseless";
+  let
+      user = "dustin";
       linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
       darwinSystems = [ "aarch64-darwin" "x86_64-darwin" ];
       forAllSystems = f: nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) f;
-      devShell = system: let pkgs = nixpkgs.legacyPackages.${system};
-          default = with pkgs;
-            mkShell {
-              nativeBuildInputs = [ bashInteractive git age age-plugin-yubikey ];
-              shellHook = with pkgs; ''
-                export EDITOR=vim
-              '';
-            };
-       
-
+      devShell = system: let pkgs = nixpkgs.legacyPackages.${system}; in {
+        default = with pkgs; mkShell {
+          nativeBuildInputs = with pkgs; [ bashInteractive git age age-plugin-yubikey ];
+          shellHook = with pkgs; ''
+            export EDITOR=vim
+          '';
+        };
+      };
       mkApp = scriptName: system: {
         type = "app";
         program = "${(nixpkgs.legacyPackages.${system}.writeScriptBin scriptName ''
