@@ -139,7 +139,7 @@
           ];
         });
 
-         nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system:
+         nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system: # Opening parenthesis for the function starts here
           let
             pkgs = import nixpkgs {
               inherit system;
@@ -157,7 +157,7 @@
               nixjail.nixosModules.nixjail
               disko.nixosModules.disko
 
-              # THIS IS WHERE THAT ANONYMOUS MODULE GOES:
+              # THIS IS WHERE THAT ANONYMOUS MODULE GOES:
               ({ config, ... }: {
                 imports = [
                   mcp-servers-nix.lib.filesystem
@@ -178,7 +178,7 @@
                   googleApiKey = "YOUR_GOOGLE_KEY_HERE";
                 };
               }) # Closing brace for the anonymous module. This is an item in the 'modules' list.
-              # ENSURE there is no accidental extra 'imports = [...]' here.
+              # ENSURE there is no accidental extra 'imports = [...]' here.
 
               home-manager.nixosModules.home-manager {
                 home-manager = {
@@ -198,4 +198,4 @@
               }
             ];
           }
-        );
+        ); # This closing parenthesis was missing or misplaced, it closes the function passed to genAttrs.
