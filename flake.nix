@@ -76,7 +76,7 @@
                 export EDITOR=vim
               '';
             };
-        };
+       #};
 
       mkApp = scriptName: system: {
         type = "app";
