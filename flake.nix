@@ -152,7 +152,6 @@
         });
         nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system:
   let
-    # Streamlined pkgs definition to be used throughout this nixosConfiguration
     pkgs = import nixpkgs {
       inherit system;
       config = {
@@ -163,7 +162,6 @@
   in
   nixpkgs.lib.nixosSystem {
     inherit system;
-    # Passed pkgs in specialArgs for easier access within modules
     specialArgs = inputs // { inherit pkgs; };
     modules = [
 
@@ -172,7 +170,7 @@
       disko.nixosModules.disko
 
       # THIS IS WHERE THAT ANONYMOUS MODULE GOES:
-      ({ config, lib, pkgs, ... }: { # Added pkgs to module arguments
+      ({ config, lib, pkgs, ... }: {
         imports = [
           mcp-servers-nix.lib.filesystem
           mcp-servers-nix.lib.fetch
@@ -186,11 +184,6 @@
         programs.fetch.enable = true;
         programs.claude-task-master = {
           enable = true;
-          # IMPORTANT: Replace these with actual secrets managed by agenix!
-          # Example using agenix (assuming secrets are defined via agenix module)
-          # anthropicApiKey = lib.mkIf config.age.secrets.anthropicApiKey.enable config.age.secrets.anthropicApiKey.path;
-          # Or, if using environment variables:
-          # anthropicApiKey = builtins.getEnv "ANTHROPIC_API_KEY";
           anthropicApiKey = "YOUR_ANTHROPIC_API_KEY_HERE";
           perplexityApiKey = "YOUR_PERPLEXITY_API_KEY_HERE";
           openaiApiKey = "YOUR_OPENAI_KEY_HERE";
@@ -202,18 +195,21 @@
           useGlobalPkgs = true;
           useUserPackages = true;
           users.${user} = import ./modules/nixos/home-manager.nix;
-        };l
+        };
       }
+      # This is where the problematic '}' likely is.
+      # It probably closed the 'modules' list prematurely.
+      # There shouldn't be an extra '}' before ./hosts/nixos.
       ./hosts/nixos
       {
-        environment.systemPackages = with pkgs; [ # Using the 'pkgs' defined in the 'let' block
+        environment.systemPackages = with pkgs; [
           claude-desktop.packages.${system}.claude-desktop
           mcp-server-fetch
           mcp-server-filesystem
           claude-task-master
         ];
       }
-    ];
+    ]; # This ']' closes the 'modules' list
   }
-);
-}
+); # This ')' closes the 'nixosSystem' call, and then the ')' closes the genAttrs function.
+} # This '}' closes the 'outputs' function.
