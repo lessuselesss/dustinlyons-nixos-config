@@ -164,9 +164,9 @@
               ({ config, ... }: {
                 imports = [
                   # Import the specific MCP server modules you want to use
-                  mcp-servers-nix.modules.filesystem
-                  mcp-servers-nix.modules.fetch
-                  mcp-servers-nix.modules.claude-task-master # Import the new claude-task-master module
+                  mcp-servers-nix.nixosModules.filesystem
+                  mcp-servers-nix.nixosModules.fetch
+                  mcp-servers-nix.nixosModules.claude-task-master # Import the new claude-task-master module
                 ];
 
                 # This section generates the MCP configuration file based on enabled programs
