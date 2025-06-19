@@ -17,6 +17,7 @@
 
     # determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
     # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
+    
     flake-utils.url = "github:numtide/flake-utils";
 
     darwin = {
@@ -231,4 +232,4 @@ outputs = { self, task-master, agenix, claude-desktop, darwin, disko, flake-util
           ]; # This ']' closes the 'modules' list
         }
       ); # This ')' closes the 'nixosSystem' call, and then the ')' closes the genAttrs function.
-      } # This '}' closes the 'outputs' function.
+  } # This '}' closes the 'outputs' function.
