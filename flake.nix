@@ -65,13 +65,9 @@
       inputs.flake-utils.follows = "flake-utils";
     };
   };
-  pre-commit-hooks = {
-      url = "github:cachix/pre-commit-hooks.nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
 
 # Updated output signature to reflect the mcp-servers-nix input chang
-outputs = { self, pre-commit-hooks, task-master, agenix, claude-desktop, darwin, disko, flake-utils, home-manager, homebrew-bundle, homebrew-cask, homebrew-core, nix-homebrew, nixjail, nixpkgs, ... }@inputs:
+outputs = { self, task-master, agenix, claude-desktop, darwin, disko, flake-utils, home-manager, homebrew-bundle, homebrew-cask, homebrew-core, nix-homebrew, nixjail, nixpkgs, ... }@inputs:
   let
     user = "lessuseless";
     linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
@@ -95,7 +91,6 @@ outputs = { self, pre-commit-hooks, task-master, agenix, claude-desktop, darwin,
         nativeBuildInputs = with pkgs; [ bashInteractive git age age-plugin-yubikey ];
   
         shellHook = with pkgs; ''
-          ${self.checks.${system}.pre-commit-check.shellHook}
           export EDITOR=vim
         '';
       };
@@ -104,6 +99,7 @@ outputs = { self, pre-commit-hooks, task-master, agenix, claude-desktop, darwin,
     # This example assumes the scripts 'apply', 'build-switch', etc., exist as files
     # in a directory structure like `./apps/${system}/${scriptName}.sh` and are read into the derivation.
     # You might need to adjust the path based on where your actual scripts live.
+    # For now, keeping the original logic, assuming you have files like apps/x86_64-linux/apply
     mkApp = scriptName: system: {
       type = "app";
       program = "${(nixpkgs.legacyPackages.${system}.writeScriptBin scriptName ''
@@ -112,7 +108,6 @@ outputs = { self, pre-commit-hooks, task-master, agenix, claude-desktop, darwin,
         # For demonstration, let's assume they are simple shell scripts within the flake's `apps` directory
         # If these are actual Nix derivations/packages, you'd reference them differently.
         # This part requires you to provide the actual script content or a path to it.
-        # For now, keeping the original logic, assuming you have files like apps/x86_64-linux/apply
         PATH=${nixpkgs.legacyPackages.${system}.git}/bin:$PATH # Ensure git is in PATH if needed by the script
         echo "Running ${scriptName} for ${system}"
         exec ${self}/apps/${system}/${scriptName}
