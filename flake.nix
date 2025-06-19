@@ -78,7 +78,7 @@ outputs = { self, pre-commit-hooks, task-master, agenix, claude-desktop, darwin,
     darwinSystems = [ "aarch64-darwin" "x86_64-darwin" ];
     forAllSystems = f: nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) f;
     # pre-commit.nix
-    {
+  
       checks = forAllSystems (system: {
         pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
           src = ./.;
@@ -87,8 +87,8 @@ outputs = { self, pre-commit-hooks, task-master, agenix, claude-desktop, darwin,
           };
         };
       });
-    };
-    devShell = system: let pkgs = nixpkgs.legacyPackages.${system}; in {
+  
+      devShell = system: let pkgs = nixpkgs.legacyPackages.${system}; in {
       default = with pkgs; mkShell {
         
         inherit (self.checks.${system}.pre-commit-check) shellHook;
