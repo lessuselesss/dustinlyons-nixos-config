@@ -65,9 +65,13 @@
       inputs.flake-utils.follows = "flake-utils";
     };
   };
+  pre-commit-hooks = {
+      url = "github:cachix/pre-commit-hooks.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-  # Updated output signature to reflect the mcp-servers-nix input chang
-outputs = { self, task-master, agenix, claude-desktop, darwin, disko, flake-utils, home-manager, homebrew-bundle, homebrew-cask, homebrew-core, nix-homebrew, nixjail, nixpkgs, ... }@inputs:
+# Updated output signature to reflect the mcp-servers-nix input chang
+outputs = { self, pre-commit-hooks, task-master, agenix, claude-desktop, darwin, disko, flake-utils, home-manager, homebrew-bundle, homebrew-cask, homebrew-core, nix-homebrew, nixjail, nixpkgs, ... }@inputs:
   let
     user = "lessuseless";
     linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
