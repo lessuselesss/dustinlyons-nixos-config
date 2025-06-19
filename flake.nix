@@ -82,7 +82,7 @@ outputs = { self, task-master, agenix, claude-desktop, darwin, disko, flake-util
           };
         };
       });
-
+    };
     devShell = system: let pkgs = nixpkgs.legacyPackages.${system}; in {
       default = with pkgs; mkShell {
         
