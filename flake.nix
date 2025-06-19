@@ -236,4 +236,4 @@ outputs = { self, pre-commit-hooks, task-master, agenix, claude-desktop, darwin,
           ]; # This ']' closes the 'modules' list
         }
       ); # This ')' closes the 'nixosSystem' call, and then the ')' closes the genAttrs function.
-  } # This '}' closes the 'outputs' function.
+  }; # This '}' closes the 'outputs' function.
