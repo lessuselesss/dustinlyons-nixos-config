@@ -141,22 +141,13 @@ outputs = { self, pre-commit-hooks, task-master, agenix, claude-desktop, darwin,
       devShells = forAllSystems devShell;
 
       apps = nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
-
+     
       darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (system:
-          darwin.lib.darwinSystem {
+        darwin.lib.darwinSystem {
           inherit system;
-          specialArgs = { inherit inputs system; };
+          specialArgs = inputs;
           modules = [
             home-manager.darwinModules.home-manager
-            # Added home-manager configuration for Darwin
-            {
-              home-manager = {
-                useGlobalPkgs = true;
-                useUserPackages = true;
-                # Assuming you'll create a dedicated home-manager config for Darwin
-                users.${user} = import ./modules/darwin/home-manager.nix;
-              };
-            }
             nix-homebrew.darwinModules.nix-homebrew
             {
               nix-homebrew = {
@@ -173,47 +164,14 @@ outputs = { self, pre-commit-hooks, task-master, agenix, claude-desktop, darwin,
             }
             ./hosts/darwin
           ];
-        });
-        nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system:
-        let
-          pkgs = import nixpkgs {
-            inherit system;
-            config = {
-              allowUnfree = true;
-            };
-            # overlays = [ mcp-servers-nix.overlays.default ];
-          };
-        in
+        }
+      );
+      nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system:
         nixpkgs.lib.nixosSystem {
           inherit system;
-          specialArgs = inputs // { inherit pkgs; };
+          specialArgs = inputs;
           modules = [
-            task-master.nixosModules.default
-            agenix.nixosModules.default
-            nixjail.nixosModules.nixjail
             disko.nixosModules.disko
-      
-#            # THIS IS WHERE THAT ANONYMOUS MODULE GOES:
-#            ({ config, lib, pkgs, ... }: {
-#              imports = [
-#                mcp-servers-nix.lib.filesystem
-#                mcp-servers-nix.lib.fetch
-#                mcp-servers-nix.lib.claude-task-master
-#              ];
-#      
-#              programs.filesystem = {
-#                enable = true;
-#                args = [ "/path/to/allowed/directory" ];
-#              };
-#              programs.fetch.enable = true;
-#              programs.claude-task-master = {
-#                enable = true;
-#                anthropicApiKey = "YOUR_ANTHROPIC_API_KEY_HERE";
-#                perplexityApiKey = "YOUR_PERPLEXITY_API_KEY_HERE";
- #               openaiApiKey = "YOUR_OPENAI_KEY_HERE";
-  #              googleApiKey = "YOUR_GOOGLE_KEY_HERE";
-  #            };
-  #        })
             home-manager.nixosModules.home-manager {
               home-manager = {
                 useGlobalPkgs = true;
@@ -221,19 +179,10 @@ outputs = { self, pre-commit-hooks, task-master, agenix, claude-desktop, darwin,
                 users.${user} = import ./modules/nixos/home-manager.nix;
               };
             }
-            # This is where the problematic '}' likely is.
-            # It probably closed the 'modules' list prematurely.
-            # There shouldn't be an extra '}' before ./hosts/nixos.
             ./hosts/nixos
-#            {
-#              environment.systemPackages = with pkgs; [###
-#                claude-desktop.packages.${system}.claude-desktop
-#                mcp-server-fetch
-#                mcp-server-filesystem
-#                claude-task-master
-#              ];
-#            }
-          ]; # This ']' closes the 'modules' list
+          ];
         }
-      ); # This ')' closes the 'nixosSystem' call, and then the ')' closes the genAttrs function.
-  }; # This '}' closes the 'outputs' function.
+      );
+    };
+}
+
