@@ -2,6 +2,7 @@
 
 with pkgs; [
   # General packages for development and system management
+  alejandra
   atuin
   aider-chat
   alacritty
