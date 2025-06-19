@@ -54,7 +54,7 @@
 
     # Changed input name from mcp-servers-nix.lib to mcp-servers-nix
 #    mcp-servers-nix = {
-#      url = "github:lessuselesss/mcp-servers-nix?ref=taskmaster";
+#      url = "github:lessuselesss/mcp-servers-nix;
 #      inputs.nixpkgs.follows = "nixpkgs";
 #    };
 
@@ -65,10 +65,10 @@
     };
   };
 
-  # Updated output signature to reflect the mcp-servers-nix input change
-  outputs = { task-master, agenix, self, claude-desktop, darwin, disko, flake-utils, home-manager, homebrew-bundle, homebrew-cask, homebrew-core, nix-homebrew, nixjail, nixpkgs, ... }@inputs:
+  # Updated output signature to reflect the mcp-servers-nix input chang
+outputs = { self, task-master, agenix, claude-desktop, darwin, disko, flake-utils, home-manager, homebrew-bundle, homebrew-cask, homebrew-core, nix-homebrew, nixjail, nixpkgs, ... }@inputs:
   let
-    user = "dustin";
+    user = "lessuseless";
     linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
     darwinSystems = [ "aarch64-darwin" "x86_64-darwin" ];
     forAllSystems = f: nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) f;
