@@ -72,8 +72,23 @@ outputs = { self, task-master, agenix, claude-desktop, darwin, disko, flake-util
     linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
     darwinSystems = [ "aarch64-darwin" "x86_64-darwin" ];
     forAllSystems = f: nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) f;
+    # pre-commit.nix
+    {
+      checks = forAllSystems (system: {
+        pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
+          src = ./.;
+          hooks = {
+            nixpkgs-fmt.enable = true;
+          };
+        };
+      });
+
     devShell = system: let pkgs = nixpkgs.legacyPackages.${system}; in {
       default = with pkgs; mkShell {
+        
+        inherit (self.checks.${system}.pre-commit-check) shellHook;
+        buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
+        
         nativeBuildInputs = with pkgs; [ bashInteractive git age age-plugin-yubikey ];
         shellHook = with pkgs; ''
           export EDITOR=vim
