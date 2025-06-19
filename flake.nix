@@ -95,7 +95,8 @@ outputs = { self, pre-commit-hooks, task-master, agenix, claude-desktop, darwin,
         buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
         
         nativeBuildInputs = with pkgs; [ bashInteractive git age age-plugin-yubikey ];
-        ${shellHook} = with pkgs; ''
+        shellHook = with pkgs; ''
+          ${shellHook}
           export EDITOR=vim
         '';
       };
