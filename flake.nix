@@ -91,12 +91,11 @@ outputs = { self, pre-commit-hooks, task-master, agenix, claude-desktop, darwin,
       devShell = system: let pkgs = nixpkgs.legacyPackages.${system}; in {
       default = with pkgs; mkShell {
         
-        inherit (self.checks.${system}.pre-commit-check) shellHook;
-        buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
-        
+        buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;   
         nativeBuildInputs = with pkgs; [ bashInteractive git age age-plugin-yubikey ];
+  
         shellHook = with pkgs; ''
-          ${shellHook}
+          ${self.checks.${system}.pre-commit-check.shellHook}
           export EDITOR=vim
         '';
       };
