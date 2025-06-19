@@ -220,7 +220,7 @@ outputs = { self, pre-commit-hooks, task-master, agenix, claude-desktop, darwin,
                 useUserPackages = true;
                 users.${user} = import ./modules/nixos/home-manager.nix;
               };
-            }
+
             # This is where the problematic '}' likely is.
             # It probably closed the 'modules' list prematurely.
             # There shouldn't be an extra '}' before ./hosts/nixos.
