@@ -17,7 +17,7 @@
 
     # determinate.url = "https://flakehub.com/f/DeterminateSystems/determinate/*";
     # nixpkgs.url = "https://flakehub.com/f/NixOS/nixpkgs/0";
-    
+
     flake-utils.url = "github:numtide/flake-utils";
 
     darwin = {
@@ -49,15 +49,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    task-master = { 
+    task-master = {
       url = "github:lessuselesss/task-master-flake";
     };
 
     # Changed input name from mcp-servers-nix.lib to mcp-servers-nix
-#    mcp-servers-nix = {
-#      url = "github:lessuselesss/mcp-servers-nix";
-#      inputs.nixpkgs.follows = "nixpkgs";
-#    };
+    #    mcp-servers-nix = {
+    #      url = "github:lessuselesss/mcp-servers-nix";
+    #      inputs.nixpkgs.follows = "nixpkgs";
+    #    };
 
     claude-desktop = {
       url = "github:k3d3/claude-desktop-linux-flake";
@@ -66,34 +66,51 @@
     };
   };
 
-# Updated output signature to reflect the mcp-servers-nix input chang
-outputs = { self, task-master, agenix, claude-desktop, darwin, disko, flake-utils, home-manager, homebrew-bundle, homebrew-cask, homebrew-core, nix-homebrew, nixjail, nixpkgs, ... }@inputs:
-  let
+  # Updated output signature to reflect the mcp-servers-nix input chang
+  outputs = {
+    self,
+    task-master,
+    agenix,
+    claude-desktop,
+    darwin,
+    disko,
+    flake-utils,
+    home-manager,
+    homebrew-bundle,
+    homebrew-cask,
+    homebrew-core,
+    nix-homebrew,
+    nixjail,
+    nixpkgs,
+    ...
+  } @ inputs: let
     user = "lessuseless";
-    linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
-    darwinSystems = [ "aarch64-darwin" "x86_64-darwin" ];
+    linuxSystems = ["x86_64-linux" "aarch64-linux"];
+    darwinSystems = ["aarch64-darwin" "x86_64-darwin"];
     forAllSystems = f: nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) f;
     # pre-commit.nix
-  
-      checks = forAllSystems (system: {
-        pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
-          src = ./.;
-          hooks = {
-            nixpkgs-fmt.enable = true;
-          };
+
+    checks = forAllSystems (system: {
+      pre-commit-check = inputs.pre-commit-hooks.lib.${system}.run {
+        src = ./.;
+        hooks = {
+          nixpkgs-fmt.enable = true;
         };
-      });
-  
-      devShell = system: let pkgs = nixpkgs.legacyPackages.${system}; in {
-      default = with pkgs; mkShell {
-        
-        buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;   
-        nativeBuildInputs = with pkgs; [ bashInteractive git age age-plugin-yubikey ];
-  
-        shellHook = with pkgs; ''
-          export EDITOR=vim
-        '';
       };
+    });
+
+    devShell = system: let
+      pkgs = nixpkgs.legacyPackages.${system};
+    in {
+      default = with pkgs;
+        mkShell {
+          buildInputs = self.checks.${system}.pre-commit-check.enabledPackages;
+          nativeBuildInputs = with pkgs; [bashInteractive git age age-plugin-yubikey];
+
+          shellHook = with pkgs; ''
+            export EDITOR=vim
+          '';
+        };
     };
     # mkApp function assumes scripts exist at specific paths or are packaged derivations.
     # This example assumes the scripts 'apply', 'build-switch', etc., exist as files
@@ -131,13 +148,13 @@ outputs = { self, task-master, agenix, claude-desktop, darwin, disko, flake-util
       "check-keys" = mkApp "check-keys" system;
       "rollback" = mkApp "rollback" system;
     };
-  in
-    {
-      devShells = forAllSystems devShell;
+  in {
+    devShells = forAllSystems devShell;
 
-      apps = nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
-     
-      darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (system:
+    apps = nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
+
+    darwinConfigurations = nixpkgs.lib.genAttrs darwinSystems (
+      system:
         darwin.lib.darwinSystem {
           inherit system;
           specialArgs = inputs;
@@ -160,14 +177,16 @@ outputs = { self, task-master, agenix, claude-desktop, darwin, disko, flake-util
             ./hosts/darwin
           ];
         }
-      );
-      nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (system:
+    );
+    nixosConfigurations = nixpkgs.lib.genAttrs linuxSystems (
+      system:
         nixpkgs.lib.nixosSystem {
           inherit system;
           specialArgs = inputs;
           modules = [
             disko.nixosModules.disko
-            home-manager.nixosModules.home-manager {
+            home-manager.nixosModules.home-manager
+            {
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
@@ -177,7 +196,6 @@ outputs = { self, task-master, agenix, claude-desktop, darwin, disko, flake-util
             ./hosts/nixos
           ];
         }
-      );
-    };
+    );
+  };
 }
-
