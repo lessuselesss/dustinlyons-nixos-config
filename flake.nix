@@ -48,11 +48,15 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # Changed input name from mcp-servers-nix.lib to mcp-servers-nix
-    mcp-servers-nix = {
-      url = "github:lessuselesss/mcp-servers-nix?ref=taskmaster";
-      inputs.nixpkgs.follows = "nixpkgs";
+    task-master = { 
+      url = "github:lessuselesss/task-master-flake";
     };
+
+    # Changed input name from mcp-servers-nix.lib to mcp-servers-nix
+#    mcp-servers-nix = {
+#      url = "github:lessuselesss/mcp-servers-nix?ref=taskmaster";
+#      inputs.nixpkgs.follows = "nixpkgs";
+#    };
 
     claude-desktop = {
       url = "github:k3d3/claude-desktop-linux-flake";
@@ -62,7 +66,7 @@
   };
 
   # Updated output signature to reflect the mcp-servers-nix input change
-  outputs = { agenix, self, claude-desktop, darwin, disko, flake-utils, home-manager, homebrew-bundle, homebrew-cask, homebrew-core, mcp-servers-nix, nix-homebrew, nixjail, nixpkgs, ... }@inputs:
+  outputs = { task-master, agenix, self, claude-desktop, darwin, disko, flake-utils, home-manager, homebrew-bundle, homebrew-cask, homebrew-core, nix-homebrew, nixjail, nixpkgs, ... }@inputs:
   let
     user = "dustin";
     linuxSystems = [ "x86_64-linux" "aarch64-linux" ];
@@ -164,7 +168,7 @@
           inherit system;
           specialArgs = inputs // { inherit pkgs; };
           modules = [
-      
+            task-master.nixosModules.default
             agenix.nixosModules.default
             nixjail.nixosModules.nixjail
             disko.nixosModules.disko
@@ -201,14 +205,14 @@
             # It probably closed the 'modules' list prematurely.
             # There shouldn't be an extra '}' before ./hosts/nixos.
             ./hosts/nixos
-            {
-              environment.systemPackages = with pkgs; [
-                claude-desktop.packages.${system}.claude-desktop
-                mcp-server-fetch
-                mcp-server-filesystem
-                claude-task-master
-              ];
-            }
+#            {
+#              environment.systemPackages = with pkgs; [###
+#                claude-desktop.packages.${system}.claude-desktop
+#                mcp-server-fetch
+#                mcp-server-filesystem
+#                claude-task-master
+#              ];
+#            }
           ]; # This ']' closes the 'modules' list
         }
       ); # This ')' closes the 'nixosSystem' call, and then the ')' closes the genAttrs function.
