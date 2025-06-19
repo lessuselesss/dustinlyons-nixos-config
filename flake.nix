@@ -54,7 +54,7 @@
 
     # Changed input name from mcp-servers-nix.lib to mcp-servers-nix
 #    mcp-servers-nix = {
-#      url = "github:lessuselesss/mcp-servers-nix;
+#      url = "github:lessuselesss/mcp-servers-nix";
 #      inputs.nixpkgs.follows = "nixpkgs";
 #    };
 
