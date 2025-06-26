@@ -1,7 +1,7 @@
 { config, inputs, pkgs, agenix, ... }:
 
 let user = "%USER%";
-    keys = [ "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p" ]; in
+    keys = [ "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBK7FLBdSazoQCqOm8qdrtX+5mKcrlhw6DAlqpvQJ2CCzZq3yOb+kjusEuecRFWHGYSVVascwiDbzsIe6PHsXP9I= <ssh://github.com_lessuseless@tachi|nist256p1>" ]; in
 {
   imports = [
     ../../modules/nixos/secrets.nix
