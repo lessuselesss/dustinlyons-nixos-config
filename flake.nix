@@ -61,7 +61,7 @@
       };
 
      # --- mkAppLib pattern for apl ---
-      mkAplApp = system: let
+      mkLib = system: let
         pkgs = nixpkgs.legacyPackages.${system};
         aplDrv = import ./apps/universal/apl/default.nix { inherit pkgs; };
       in {
