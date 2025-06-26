@@ -88,10 +88,10 @@ with pkgs; [
 # ========================
 # age
 # age-plugin-yubikey
-# age-plugin-ledger
-# gnupg
-# libfido2
-# pass
+age-plugin-ledger
+gnupg
+libfido2
+pass
 # gopass
 # gopass-hibp
 # gopass-summon-provider
