@@ -1,6 +1,16 @@
 { pkgs, config, ... }:
 
 let
+  # keycutter naming convention
+  # [<service>_]<user>@<device>
+  #
+  # Connect to github.com as user 'alex'
+  # $ ssh github.com_alex
+  #
+  # Connect to github.com as user 'work'
+  # $ ssh github.com_work
+
+  
   githubPublicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p dustin@Dustins-MBP.localdomain";
   githubPublicSigningKey = ''
     -----BEGIN PGP PUBLIC KEY BLOCK-----
