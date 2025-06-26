@@ -9,6 +9,7 @@ let
   #
   # Connect to github.com as user 'work'
   # $ ssh github.com_work
+  # attribution: https://github.com/mbailey/keycutter/blob/4c730df89a63e46b4645366812a6f359fbea1403/docs/ssh-keytags.md
 
   
   githubPublicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p dustin@Dustins-MBP.localdomain";
