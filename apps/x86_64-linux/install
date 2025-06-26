@@ -11,13 +11,14 @@ check_installer() {
 }
 
 cleanup() {
-  rm -rf nixos-config-main.zip nixos-config-main nixos-config
+  rm -rf nixos-config-*.zip nixos-config-*
 }
 
 download_config() {
-  curl -LJ0 https://github.com/dustinlyons/nixos-config/archive/main.zip -o nixos-config-main.zip
-  unzip nixos-config-main.zip
-  mv nixos-config-main/templates/starter nixos-config
+  local BRANCH=$(git rev-parse --abbrev-ref HEAD) # Automatically detect the current branch
+  curl -LJ0 "https://github.com/dustinlyons/nixos-config/archive/${BRANCH}.zip" -o nixos-config-${BRANCH}.zip
+  unzip nixos-config-${BRANCH}.zip
+  mv nixos-config-${BRANCH}/templates/starter nixos-config
   cd nixos-config
 }
 
@@ -71,7 +72,7 @@ prompt_reboot() {
 
 cleanup
 check_installer
-download_config
+download_config # Automatically detects the branch
 run_apply
 run_disko
 setup_files
