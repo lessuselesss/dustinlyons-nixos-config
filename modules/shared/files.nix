@@ -12,7 +12,7 @@ let
   # attribution: https://github.com/mbailey/keycutter/blob/4c730df89a63e46b4645366812a6f359fbea1403/docs/ssh-keytags.md
 
   
-  githubPublicKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOk8iAnIaa1deoc7jw8YACPNVka1ZFJxhnU4G74TmS+p dustin@Dustins-MBP.localdomain";
+  githubPublicKey = "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBK7FLBdSazoQCqOm8qdrtX+5mKcrlhw6DAlqpvQJ2CCzZq3yOb+kjusEuecRFWHGYSVVascwiDbzsIe6PHsXP9I= <ssh://github.com_lessuseless@tachi|nist256p1>";
   githubPublicSigningKey = ''
     -----BEGIN PGP PUBLIC KEY BLOCK-----
 
