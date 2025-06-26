@@ -53,12 +53,22 @@
       forAllSystems = f: nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) f;
       devShell = system: let pkgs = nixpkgs.legacyPackages.${system}; in {
         default = with pkgs; mkShell {
-          nativeBuildInputs = with pkgs; [ bashInteractive git age age-plugin-yubikey ];
+          nativeBuildInputs = with pkgs; [ bashInteractive git age age-plugin-ledger ];
           shellHook = with pkgs; ''
             export EDITOR=vim
           '';
         };
       };
+
+     # --- mkAppLib pattern for apl ---
+      mkAplApp = system: let
+        pkgs = nixpkgs.legacyPackages.${system};
+        aplDrv = import ./apps/universal/apl/default.nix { inherit pkgs; };
+      in {
+        type = "app";
+        program = "${aplDrv}/bin/apl";
+      };
+
       mkApp = scriptName: system: {
         type = "app";
         program = "${(nixpkgs.legacyPackages.${system}.writeScriptBin scriptName ''
@@ -86,6 +96,14 @@
         "check-keys" = mkApp "check-keys" system;
         "rollback" = mkApp "rollback" system;
       };
+       apps.${system}.apl = {
+         type = "app";
+         program = "${self.packages.${system}.apl}/bin/apl";
+      };
+
+    defaultPackage.${system} = self.packages.${system}.apl;
+    defaultApp.${system} = self.apps.${system}.apl;
+  };
     in
     {
       templates = {
