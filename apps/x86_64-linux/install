@@ -14,9 +14,22 @@ cleanup() {
   rm -rf nixos-config-*.zip nixos-config-*
 }
 
+detect_fork() {
+  # Get the remote origin URL
+  ORIGIN_URL=$(git remote get-url origin)
+
+  # Extract owner and repo
+  REPO_OWNER=$(echo "$ORIGIN_URL" | sed -n 's|.*github\.com[/:]\([^/]*\)/.*|\1|p')
+  REPO_NAME=$(echo "$ORIGIN_URL" | sed -n 's|.*github\.com[/:][^/]*/\([^\.]*\).*|\1|p')
+
+  # Return the forked repository URL
+  echo "${REPO_OWNER}/${REPO_NAME}"
+}
+
 download_config() {
-  local BRANCH=$(git rev-parse --abbrev-ref HEAD) # Automatically detect the current branch
-  curl -LJ0 "https://github.com/dustinlyons/nixos-config/archive/${BRANCH}.zip" -o nixos-config-${BRANCH}.zip
+  local BRANCH=$(git rev-parse --abbrev-ref HEAD) # Detect the current branch automatically
+  local REPO=$(detect_fork) # Detect forked repository dynamically
+  curl -LJ0 "https://github.com/${REPO}/archive/${BRANCH}.zip" -o nixos-config-${BRANCH}.zip
   unzip nixos-config-${BRANCH}.zip
   mv nixos-config-${BRANCH}/templates/starter nixos-config
   cd nixos-config
@@ -72,7 +85,7 @@ prompt_reboot() {
 
 cleanup
 check_installer
-download_config # Automatically detects the branch
+download_config # Automatically detects fork and branch
 run_apply
 run_disko
 setup_files
