@@ -21,7 +21,7 @@
     loader.efi.canTouchEfiVariables = true;
 
     initrd.availableKernelModules = [
-      "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" "v4l2loopback"
+      "xhci_pci" "ahci" "nvme" "thunderbolt" "vmd" "usbhid" "usb_storage" "sd_mod" "v4l2loopback"
     ];
     initrd.kernelModules        = [];
     kernelModules               = [ "uinput" "v4l2loopback" ];  # uinput for input devices, v4l2loopback for virtual cameras
