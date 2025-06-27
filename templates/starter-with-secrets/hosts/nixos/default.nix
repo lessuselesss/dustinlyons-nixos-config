@@ -19,12 +19,21 @@ let user = "%USER%";
       };
       efi.canTouchEfiVariables = true;
     };
-    initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usbhid" "usb_storage" "sd_mod" ];
-    # Uncomment for AMD GPU
-    # initrd.kernelModules = [ "amdgpu" ];
-    kernelPackages = pkgs.linuxPackages_latest;
-    kernelModules = [ "uinput" ];
+       initrd.availableKernelModules = [
+      "xhci_pci" "ahci" "nvme" "thunderbolt" "vmd" "usbhid" "usb_storage" "sd_mod" "v4l2loopback"
+    ];
+    initrd.kernelModules        = [];
+    kernelModules               = [       
+      "iwlwifi"
+      "iwlmvm" 
+      "uinput" 
+      "v4l2loopback" 
+    ];  # uinput for input devices, v4l2loopback for virtual cameras
+    extraModulePackages         = [ pkgs.linuxPackages.v4l2loopback ];
   };
+
+  # Filesystems
+  supportedFilesystems = [ "btrfs" "ext2" "ext3" "ext4" "exfat" "f2fs" "vfat" "fat8" "fat16" "fat32" "ntfs" "xfs" ];
 
   # Set your time zone.
   time.timeZone = "America/New_York";
