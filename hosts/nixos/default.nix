@@ -29,13 +29,14 @@
   };
 
   # Filesystems
+  supportedFilesystems = [ "btrfs" "ext2" "ext3" "ext4" "exfat" "f2fs" "vfat" "fat8" "fat16" "fat32" "ntfs" "xfs" ];
   fileSystems."/" = {
-    device = "/dev/disk/by-uuid/3b81b6bc-b655-4985-b7dc-108ffa292c63";
+    device = "";
     fsType = "ext4";
   };
 
   fileSystems."/boot" = {
-    device  = "/dev/disk/by-uuid/D302-2157";
+    device  = "";
     fsType  = "vfat";
     options = [ "fmask=0077" "dmask=0077" ];
   };
