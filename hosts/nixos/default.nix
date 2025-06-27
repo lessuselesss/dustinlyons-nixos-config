@@ -58,7 +58,7 @@
   };
 
   # Set your time zone.
-  time.timeZone = "America/Kentucky/Louisville";
+  time.timeZone = "America/Mexico_City";
 
   # Select internationalisation properties.
   i18n.defaultLocale      = "en_US.UTF-8";
@@ -138,7 +138,7 @@
   # Define a user account. Don't forget to set a password with 'passwd'.
   users.users.${user} = {
     isNormalUser = true;
-    description  = "Dustin Lyons";
+    description  = "Ashley Barrr";
     extraGroups  = [ "networkmanager" "wheel" ];
     shell = pkgs.zsh;
   };
@@ -151,6 +151,9 @@
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
+
+  # Enable pcscd for smart card support (e.g., Ledger OpenGPG)
+  pcscd.enable = true;
 
   # List packages installed in system profile. To search, run:
   #   $ nix search <pkg>
