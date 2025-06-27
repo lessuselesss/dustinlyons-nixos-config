@@ -36,6 +36,7 @@ let user = "%USER%";
     hostName = "%HOST%"; # Define your hostname.
     useDHCP = false;
     interfaces."%INTERFACE%".useDHCP = true;
+    networkmanager.enable = true;
   };
 
   nix = {
@@ -263,6 +264,7 @@ let user = "%USER%";
       extraGroups = [
         "wheel" # Enable ‘sudo’ for the user.
         "docker"
+        "networkmanager"FnFnetF
       ];
       shell = pkgs.zsh;
       openssh.authorizedKeys.keys = keys;
