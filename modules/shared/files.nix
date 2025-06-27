@@ -29,7 +29,7 @@ in
     text = githubPublicKey;
   };
 
-  ".ssh/pgp_github.pub" = {
-    text = githubPublicSigningKey;
-  };
+ # ".ssh/pgp_github.pub" = {
+ #   text = githubPublicSigningKey;
+ # };
 }
