@@ -96,14 +96,9 @@
         "check-keys" = mkApp "check-keys" system;
         "rollback" = mkApp "rollback" system;
       };
-       apps.${system}.apl = {
-         type = "app";
-         program = "${self.packages.${system}.apl}/bin/apl";
-      };
-
-    defaultPackage.${system} = self.packages.${system}.apl;
-    defaultApp.${system} = self.apps.${system}.apl;
-  };
+      apps = nixpkgs.lib.genAttrs linuxSystems mkLinuxApps // nixpkgs.lib.genAttrs darwinSystems mkDarwinApps;
+      defaultPackage = nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) (system: self.packages.${system}.apl);
+      defaultApp = nixpkgs.lib.genAttrs (linuxSystems ++ darwinSystems) (system: self.apps.${system}.apl);
     in
     {
       templates = {
